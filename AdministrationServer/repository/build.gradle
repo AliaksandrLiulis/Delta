@@ -1,0 +1,3 @@
+jar {
+    archiveName 'delta-repository.jar'
+}
