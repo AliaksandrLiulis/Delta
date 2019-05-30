@@ -39,6 +39,9 @@ public enum ServiceErrorCode {
     BODY_MESSAGE_IS_NULL(Constants.ERROR_000032),
     REPLY_MESSAGE_IS_NOT_NUMBER(Constants.ERROR_000033),
     FACE_ID_IS_NOT_NUMBER(Constants.ERROR_000034),
+    MESSAGE_REFERENCE_IS_NULL(Constants.ERROR_000035),
+    MESSAGE_SUBJECT_IS_EMPTY(Constants.ERROR_000036),
+    MESSAGE_SUBJECT_IS_LONG_SO_MUCH(Constants.ERROR_000037),
 
 
     //face validator(000061-000090)
@@ -92,6 +95,9 @@ public enum ServiceErrorCode {
         private static final String ERROR_000032 = "000032";
         private static final String ERROR_000033 = "000033";
         private static final String ERROR_000034 = "000034";
+        private static final String ERROR_000035 = "000035";
+        private static final String ERROR_000036 = "000036";
+        private static final String ERROR_000037 = "000037";
 
         private static final String ERROR_000061 = "000061";
         private static final String ERROR_000062 = "000062";

@@ -17,6 +17,7 @@ public class MessageValidator {
     private IFaceService faceServiceImpl;
 
     public void validate(final MessageDto messageDto){
+        CommonValidator.checkNullObject(messageDto, "Message reference is null", ServiceErrorCode.MESSAGE_REFERENCE_IS_NULL, ConstParamService.MESSAGE_STRING);
 
     }
 
@@ -35,5 +36,11 @@ public class MessageValidator {
         CommonValidator.checkNumberParams(resources.get(ConstParamService.FACE_ID), "face id isn't number", ServiceErrorCode.FACE_ID_IS_NOT_NUMBER, ConstParamService.FACE_ID_STRING);
         messageDto.setFaceDto(faceServiceImpl.getFaceById(Long.parseLong(resources.get(ConstParamService.FACE_ID))));
         return  messageDto;
+    }
+
+    private void checkMessageSubject(final MessageDto messageDto){
+        CommonValidator.checkNullStringParams(messageDto.getMessageSubject(), "subject for message is null", ServiceErrorCode.MESSAGE_SUBJECT_IS_NULL, ConstParamService.SUBJECT_STRING);
+        CommonValidator.checkEmptyStringParams(messageDto.getMessageSubject(), "subject for message is Empty", ServiceErrorCode.MESSAGE_SUBJECT_IS_EMPTY, ConstParamService.SUBJECT_STRING);
+        CommonValidator.checkLengthStringParams(messageDto.getMessageSubject(), "subject for message is long so much", 100, ServiceErrorCode.MESSAGE_SUBJECT_IS_LONG_SO_MUCH, ConstParamService.SUBJECT_STRING);
     }
 }
