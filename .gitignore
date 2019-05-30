@@ -1,3 +1,6 @@
 /AdministrationServer/.idea
 /AdministrationServer/.gradle
 /AdministrationServer/gradle
+/AdministrationServer/repository/build
+/AdministrationServer/service/build
+/AdministrationServer/web/build
