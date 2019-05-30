@@ -13,7 +13,7 @@ public class Message extends AbstractModel {
 
     @Column(name = "message_subject", length = 100)
     private String messageSubject;
-    @Column(name = "message_body")
+    @Column(name = "message_body", length = 3000)
     private String messageBody;
     @Column(name = "reply_message")
     private Long replyMessage;
@@ -21,7 +21,7 @@ public class Message extends AbstractModel {
     private LocalDate createDate;
     @Column(name = "send_date")
     private LocalDate sendDate;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "face_id")
     private Face face;
 

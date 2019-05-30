@@ -1,7 +1,0 @@
-jar {
-    archiveName 'delta-service.jar'
-}
-
-dependencies {
-    compile project(":repository")
-}
