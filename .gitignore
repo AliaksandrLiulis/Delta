@@ -5,5 +5,6 @@
 /AdministrationServer/service/build
 /AdministrationServer/web/build
 /AdministrationServer/repository/out
-/AdministrationServer/service
-/AdministrationServer/web
+
+/AdministrationServer/service/out
+/AdministrationServer/web/out
