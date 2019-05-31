@@ -15,13 +15,13 @@ class MessageConverter @Autowired constructor(private val modelMapper: ModelMapp
 
     override fun dtoToModel(messageDto: MessageDto): Message {
         val message = Message()
-        modelMapper!!.map(messageDto, message)
+        modelMapper.map(messageDto, message)
         return message
     }
 
     override fun modelToDto(message: Message): MessageDto {
         val messageDto = MessageDto()
-        modelMapper!!.map(message, messageDto)
+        modelMapper.map(message, messageDto)
         return messageDto
     }
 

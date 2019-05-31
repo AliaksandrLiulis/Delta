@@ -30,12 +30,12 @@ open class FaceServiceImpl @Autowired constructor(private val faceRepository: IR
         return faceConverter.modelToDto(faceRepository.save(faceConverter.dtoToModel(faceDto)))
     }
 
-    override fun getFaceById(recipientId: Long?): FaceDto {
+    override fun getFaceById(recipientId: Long): FaceDto {
         faceValidator.checkId(recipientId)
         return faceConverter.modelToDto(faceRepository.query(GetFaceByFaceId(Helper.getWraperId(recipientId)), 1, 0)[0])
     }
 
-    override fun getFaceByUserId(recipientId: Long?): FaceDto {
+    override fun getFaceByUserId(recipientId: Long): FaceDto {
         val faces = faceRepository.query(GetFaceByUserId(Helper.getWraperId(recipientId)), 1, 0)
         if (CollectionUtils.isEmpty(faces)) {
             LOGGER.error("User with such id not exist")

@@ -36,4 +36,11 @@ public class ConstParamService {
 
     public static final String RECIPIENT_ID = "recipientId";
 
+
+    public static final String LIMIT = "limit";
+    public static final String OFFSET = "offset";
+    public static final String PAGE = "page";
+    public static final String LIMIT_PARAMS_STRING = "limit params";
+    public static final String PAGE_PARAMS_STRING = "page params";
+
 }

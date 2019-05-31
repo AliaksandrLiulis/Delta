@@ -15,13 +15,13 @@ class FaceConverter @Autowired constructor(private val modelMapper: ModelMapper)
 
     override fun dtoToModel(faceDto: FaceDto): Face {
         val face = Face()
-        modelMapper!!.map(faceDto, face)
+        modelMapper.map(faceDto, face)
         return face
     }
 
     override fun modelToDto(face: Face): FaceDto {
         val faceDto = FaceDto()
-        modelMapper!!.map(face, faceDto)
+        modelMapper.map(face, faceDto)
         return faceDto
     }
 

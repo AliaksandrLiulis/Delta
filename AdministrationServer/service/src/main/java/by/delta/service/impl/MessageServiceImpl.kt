@@ -1,13 +1,14 @@
 package by.delta.service.impl
 
 import by.delta.converter.impl.MessageConverter
-import by.delta.dto.FaceDto
 import by.delta.dto.MessageDto
 import by.delta.model.Message
 import by.delta.repository.IRepository
 import by.delta.service.IFaceService
 import by.delta.service.IMessageService
 import by.delta.specification.impl.message.GetUserMessagesByFaceId
+import by.delta.util.ConstParamService
+import by.delta.util.PagingParamsValidator
 import by.delta.util.Helper
 import by.delta.validator.MessageValidator
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,9 +33,11 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
         return messageConverter.modelToDto(messageRepository.save(messageConverter.dtoToModel(messageDto)))
     }
 
-    override fun getUserMessages(authentication: Authentication): Set<MessageDto> {
+    override fun getUserMessages(authentication: Authentication, allRequestParams: MutableMap<String, String>): Set<MessageDto> {
         val faceDto = faceService.getFaceByUserEmail(authentication.name)
-        val messages = messageRepository.query(GetUserMessagesByFaceId(Helper.getWraperId(faceDto.id)), 100, 0)
+        PagingParamsValidator.checkRequestParams(allRequestParams)
+        val messages = messageRepository.query(GetUserMessagesByFaceId(Helper.getWraperId(faceDto.id)),
+                allRequestParams.getValue(ConstParamService.LIMIT).toInt(), allRequestParams.getValue(ConstParamService.OFFSET).toInt())
         return messageConverter.modelToDtoList(messages.toSet())
     }
 }

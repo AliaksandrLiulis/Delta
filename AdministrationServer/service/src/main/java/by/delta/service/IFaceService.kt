@@ -5,8 +5,8 @@ import by.delta.dto.FaceDto
 interface IFaceService {
 
     fun createFace(faceDto: FaceDto): FaceDto
-    fun getFaceById(recipientId: Long?): FaceDto
-    fun getFaceByUserId(recipientId: Long?): FaceDto
+    fun getFaceById(recipientId: Long): FaceDto
+    fun getFaceByUserId(recipientId: Long): FaceDto
     fun getFaceByUserEmail(email: String): FaceDto
 
 

@@ -51,7 +51,18 @@ public enum ServiceErrorCode {
     ID_FACE_IS_NULL(Constants.ERROR_000061),
     ID_FACE_IS_LONG_SO_MUCH(Constants.ERROR_000062),
     ID_FACE_IS_LESS_THAN_0(Constants.ERROR_000063),
-    ID_FACE_IS_EQUALS_0(Constants.ERROR_000064);
+    ID_FACE_IS_EQUALS_0(Constants.ERROR_000064),
+
+    //paging parameters validation(000150-000180)
+    PAGING_LIMIT_NOT_NUMBER(Constants.ERROR_000150),
+    PAGING_LIMIT_LESS_THAN_1(Constants.ERROR_000151),
+    PAGING_PAGE_NOT_NUMBER(Constants.ERROR_000152),
+    PAGING_PAGE_LESS_THAN_1(Constants.ERROR_000153),
+
+
+
+
+    ;
 
     private String errorCode;
 
@@ -109,6 +120,11 @@ public enum ServiceErrorCode {
         private static final String ERROR_000062 = "000062";
         private static final String ERROR_000063 = "000063";
         private static final String ERROR_000064 = "000064";
+
+        private static final String ERROR_000150 = "000150";
+        private static final String ERROR_000151 = "000151";
+        private static final String ERROR_000152 = "000152";
+        private static final String ERROR_000153 = "000153";
 
         private Constants() {
         }

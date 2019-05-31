@@ -15,13 +15,13 @@ open class UserConverter @Autowired constructor(private val modelMapper: ModelMa
 
     override fun dtoToModel(userDto: UserDto): User {
         val user = User()
-        modelMapper!!.map(userDto, user)
+        modelMapper.map(userDto, user)
         return user
     }
 
     override fun modelToDto(user: User): UserDto {
         val userDto = UserDto()
-        modelMapper!!.map(user, userDto)
+        modelMapper.map(user, userDto)
         return userDto
     }
 
