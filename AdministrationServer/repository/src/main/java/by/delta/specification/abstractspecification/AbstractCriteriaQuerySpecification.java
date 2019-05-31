@@ -47,6 +47,7 @@ public class AbstractCriteriaQuerySpecification<Entity extends AbstractModel> {
         return query.orderBy(criteriaBuilder.asc(root.get(RepositoryConstParams.ID_KEY)));
     }
 
+
     protected List<Predicate> getWhereCondition(final CriteriaQuery<Entity> query, final Root<Entity> root, final CriteriaBuilder criteriaBuilder) {
         List<Predicate> conditionList = new ArrayList();
         if (!CollectionUtils.isEmpty(params)) {
@@ -80,4 +81,5 @@ public class AbstractCriteriaQuerySpecification<Entity extends AbstractModel> {
         }
         return orClause;
     }
+
 }
