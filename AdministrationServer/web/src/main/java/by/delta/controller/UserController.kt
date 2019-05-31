@@ -10,15 +10,18 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(value = "/users", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
-class UserController {
-
-    @Autowired
-    private lateinit var userService: IUserService
+open class UserController @Autowired constructor(private val userService: IUserService) {
 
     @PostMapping(value = "/signUp", consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)
     fun createUser(@RequestBody resource: UserDto): UserDto {
         resource.role = Role.ROLE_USER
         return userService.createUser(resource)
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    fun getAllUsers(@RequestParam allRequestParams: MutableMap <String, String>): Set<UserDto> {
+        return userService.getAllUsers(allRequestParams)
     }
 }

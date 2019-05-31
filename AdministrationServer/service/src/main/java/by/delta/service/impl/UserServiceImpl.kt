@@ -9,9 +9,11 @@ import by.delta.model.User
 import by.delta.repository.IRepository
 import by.delta.service.IUserService
 import by.delta.specification.impl.user.GetAllUserByName
+import by.delta.specification.impl.user.GetAllUsers
 import by.delta.specification.impl.user.GetUserByEmail
 import by.delta.util.ConstParamService
 import by.delta.util.Helper
+import by.delta.util.PagingParamsValidator
 import by.delta.validator.UserValidator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -63,6 +65,14 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         val faceDto = createFaceDtoForSavedUserDto(savedUser.email, savedUser)
         faceService.createFace(faceDto)
         return savedUser
+    }
+
+    override fun getAllUsers(allRequestParams: MutableMap<String, String>): Set<UserDto> {
+        PagingParamsValidator.checkRequestParams(allRequestParams)
+
+        return userConverter.modelToDtoList(userRepository.query(GetAllUsers(null),
+                allRequestParams.getValue(ConstParamService.LIMIT).toInt(),
+                allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet())
     }
 
     private fun createFaceDtoForSavedUserDto(email: String, user: UserDto): FaceDto {
