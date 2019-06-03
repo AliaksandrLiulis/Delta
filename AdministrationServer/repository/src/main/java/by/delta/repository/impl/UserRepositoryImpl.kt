@@ -4,14 +4,10 @@ import by.delta.model.User
 import by.delta.specification.abstractspecification.AbstractCriteriaQuerySpecification
 import org.springframework.stereotype.Repository
 
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Root
-
 @Repository
 open class UserRepositoryImpl : AbstractRepository<User>() {
 
-    internal override fun getById(id: Long): User {
+    override fun getById(id: Long): User {
         return entityManager.find(User::class.java, id)
     }
 

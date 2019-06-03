@@ -28,4 +28,13 @@ object Helper {
         allEmailParams[ConstParamService.EMAIL] = emailList
         return allEmailParams
     }
+
+    fun getWraperUNPOrganization(unp: String): Map<String, List<String>> {
+        val allUnpParams = HashMap<String, List<String>>()
+        val unpList = ArrayList<String>()
+        unpList.add(unp)
+        allUnpParams[ConstParamService.UNP_ORGS] = unpList
+        return allUnpParams
+    }
+
 }

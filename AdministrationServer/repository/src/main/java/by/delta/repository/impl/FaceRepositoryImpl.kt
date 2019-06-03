@@ -4,10 +4,6 @@ import by.delta.model.Face
 import by.delta.specification.abstractspecification.AbstractCriteriaQuerySpecification
 import org.springframework.stereotype.Repository
 
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Root
-
 @Repository
 open class FaceRepositoryImpl : AbstractRepository<Face>() {
 
