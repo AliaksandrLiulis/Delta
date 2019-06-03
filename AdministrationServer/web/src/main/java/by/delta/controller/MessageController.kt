@@ -1,6 +1,7 @@
 package by.delta.controller
 
 import by.delta.dto.MessageDto
+import by.delta.dto.UserDto
 import by.delta.service.IMessageService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -19,6 +20,8 @@ open class MessageController @Autowired constructor(private val messageService: 
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun getUserMessages(authentication: Authentication, @RequestParam allRequestParams: MutableMap <String, String>): Set<MessageDto> =
-            messageService.getUserMessages(authentication, allRequestParams)
+    fun getUserMessages(authentication: Authentication, @RequestParam allRequestParams: MutableMap <String, String>):Map<String, Any> {
+        return messageService.getUserMessages(authentication, allRequestParams)
+    }
+
 }

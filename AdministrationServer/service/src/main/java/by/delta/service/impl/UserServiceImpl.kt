@@ -4,6 +4,7 @@ import by.delta.converter.IConverter
 import by.delta.dto.FaceDto
 import by.delta.dto.UserDto
 import by.delta.exception.ModelSameServiceException
+import by.delta.exception.ValidationException
 import by.delta.exception.errorCode.ServiceErrorCode
 import by.delta.model.User
 import by.delta.repository.IRepository
@@ -11,6 +12,7 @@ import by.delta.service.IUserService
 import by.delta.specification.impl.user.GetAllUserByName
 import by.delta.specification.impl.user.GetAllUsers
 import by.delta.specification.impl.user.GetUserByEmail
+import by.delta.specification.impl.user.countspecification.GetCountOfUsers
 import by.delta.util.ConstParamService
 import by.delta.util.Helper
 import by.delta.validator.UserValidator
@@ -26,8 +28,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
-
-import java.util.Arrays
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 
 @Service(value = "userService")
 open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEncoder: BCryptPasswordEncoder,
@@ -67,11 +70,16 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         return savedUser
     }
 
-    override fun getAllUsers(allRequestParams: MutableMap<String, String>): Set<UserDto> {
+    override fun getAllUsers(allRequestParams: MutableMap<String, String>):  Map<String, Any> {
         val newParams = userParametersValidator.validate(allRequestParams)
-        return userConverter.modelToDtoList(userRepository.query(GetAllUsers(newParams),
+        var mapParams = HashMap<String, Any>()
+        val countOfUsers = userRepository.countQuery(GetCountOfUsers(newParams))
+        val users =  userConverter.modelToDtoList(userRepository.query(GetAllUsers(newParams),
                 allRequestParams.getValue(ConstParamService.LIMIT).toInt(),
                 allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet())
+        mapParams["count"] = countOfUsers.toString()
+        mapParams["records"] = users
+        return mapParams
     }
 
     private fun createFaceDtoForSavedUserDto(email: String, user: UserDto): FaceDto {

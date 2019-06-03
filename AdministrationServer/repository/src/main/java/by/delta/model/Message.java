@@ -21,7 +21,7 @@ public class Message extends AbstractModel {
     private LocalDate createDate;
     @Column(name = "send_date")
     private LocalDate sendDate;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "face_id")
     private Face face;
 

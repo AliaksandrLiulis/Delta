@@ -2,11 +2,13 @@ package by.delta.service.impl
 
 import by.delta.converter.impl.MessageConverter
 import by.delta.dto.MessageDto
+import by.delta.dto.UserDto
 import by.delta.model.Message
 import by.delta.repository.IRepository
 import by.delta.service.IFaceService
 import by.delta.service.IMessageService
 import by.delta.specification.impl.message.GetUserMessagesByFaceId
+import by.delta.specification.impl.message.countSpecification.GetCountOfMessage
 import by.delta.util.ConstParamService
 import by.delta.validator.paramsvalidator.abstractvalidator.PagingParamsValidator
 import by.delta.util.Helper
@@ -35,13 +37,17 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
         return messageConverter.modelToDto(messageRepository.save(messageConverter.dtoToModel(messageDto)))
     }
 
-    override fun getUserMessages(authentication: Authentication, allRequestParams: MutableMap<String, String>): Set<MessageDto> {
+    override fun getUserMessages(authentication: Authentication, allRequestParams: MutableMap<String, String>): Map<String, Any> {
         val faceDto = faceService.getFaceByUserEmail(authentication.name)
         var newParams = messageParametersValidator.validate(allRequestParams)
-        val list:List<String> = listOf(faceDto.id.toString())
+        var mapParams = HashMap<String, Any>()
+        val list = listOf(faceDto.id.toString())
         newParams[ConstParamService.ID] = list
+        val countOfMessages = messageRepository.countQuery(GetCountOfMessage(newParams))
         val messages = messageRepository.query(GetUserMessagesByFaceId(newParams),
-                allRequestParams.getValue(ConstParamService.LIMIT).toInt(), allRequestParams.getValue(ConstParamService.OFFSET).toInt())
-        return messageConverter.modelToDtoList(messages.toSet())
+                allRequestParams.getValue(ConstParamService.LIMIT).toInt(), allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet()
+        mapParams["count"] = countOfMessages.toString()
+        mapParams["records"] =  messageConverter.modelToDtoList(messages)
+        return mapParams
     }
 }

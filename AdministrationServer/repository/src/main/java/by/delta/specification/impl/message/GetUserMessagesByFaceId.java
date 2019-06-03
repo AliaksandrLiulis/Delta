@@ -23,13 +23,13 @@ public class GetUserMessagesByFaceId extends AbstractCriteriaQuerySpecification<
     public List<Predicate> getWhereCondition(CriteriaQuery<Message> query, Root<Message> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> conditionList = new ArrayList();
         if (!CollectionUtils.isEmpty(params)) {
-            params.forEach((k, v) -> {
-                if (k.equalsIgnoreCase(RepositoryConstParams.ID_KEY)) {
-                    v.forEach(s -> {
-                        conditionList.add(criteriaBuilder.equal(root.get("face").get(k), s));
-                    });
-                }
-            });
+                params.forEach((k, v) -> {
+                    if (k.equalsIgnoreCase(RepositoryConstParams.ID_KEY)) {
+                        v.forEach(s -> {
+                            conditionList.add(criteriaBuilder.equal(root.get("face").get(k), s));
+                        });
+                    }
+                });
         }
         return conditionList;
     }

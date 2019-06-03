@@ -21,7 +21,7 @@ open class UserController @Autowired constructor(private val userService: IUserS
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun getAllUsers(@RequestParam allRequestParams: MutableMap <String, String>): Set<UserDto> {
+    fun getAllUsers(@RequestParam allRequestParams: MutableMap <String, String>): Map<String, Any> {
         return userService.getAllUsers(allRequestParams)
     }
 }

@@ -7,5 +7,5 @@ interface IUserService {
 
     fun createUser(userDto: UserDto): UserDto
     fun getUserByEmail(email: String): List<User>
-    fun getAllUsers(allRequestParams: MutableMap <String, String>):Set<UserDto>
+    fun getAllUsers(allRequestParams: MutableMap <String, String>): Map<String, Any>
 }

@@ -14,8 +14,8 @@ public class Organization extends AbstractModel {
 
     @Column(name = "org_name", length = 100)
     private String orgName;
-    @Column(name = "short_org_name", length = 50)
-    private String shortOrgName;
+    @Column(name = "org_short_name", length = 50)
+    private String orgShortName;
     @Column(name = "org_icon_name_def", length = 30)
     private String orgIconNameDef;
     @Column(name = "org_unp", length = 10)
@@ -29,12 +29,12 @@ public class Organization extends AbstractModel {
         this.orgName = orgName;
     }
 
-    public String getShortOrgName() {
-        return shortOrgName;
+    public String getOrgShortName() {
+        return orgShortName;
     }
 
-    public void setShortOrgName(String shortOrgName) {
-        this.shortOrgName = shortOrgName;
+    public void setOrgShortName(String orgShortName) {
+        this.orgShortName = orgShortName;
     }
 
     public String getOrgIconNameDef() {
@@ -64,7 +64,7 @@ public class Organization extends AbstractModel {
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
                 .append(orgName, that.orgName)
-                .append(shortOrgName, that.shortOrgName)
+                .append(orgShortName, that.orgShortName)
                 .append(orgIconNameDef, that.orgIconNameDef)
                 .append(orgUNP, that.orgUNP)
                 .isEquals();
@@ -75,7 +75,7 @@ public class Organization extends AbstractModel {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
                 .append(orgName)
-                .append(shortOrgName)
+                .append(orgShortName)
                 .append(orgIconNameDef)
                 .append(orgUNP)
                 .toHashCode();
