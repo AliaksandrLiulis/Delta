@@ -25,14 +25,7 @@ open class OrganizationServiceImpl @Autowired constructor(private val organizati
     override fun createOrganization(organizationDto: OrganizationDto): OrganizationDto {
         val allOrg = organizationRepositoryImpl.query(GeoAllOrganizationByUNP(Helper.getWraperUNPOrganization(organizationDto.orgUNP)), 1, 0)
         if (!CollectionUtils.isEmpty(allOrg)) {
-            var faceDto = FaceDto()
-            faceDto.faceName = organizationDto.orgIconNameDef
-            faceDto.organizationDto = organizationConverter.modelToDto(allOrg[0])
-            faceServiceImpl.createFace(faceDto)
-            organizationDto.id = allOrg[0].id
-            organizationDto.orgName = allOrg[0].orgName
-            organizationDto.shortOrgName = allOrg[0].shortOrgName
-            return organizationDto
+            return organizationConverter.modelToDto(allOrg[0])
         }
         val organization = organizationRepositoryImpl.save(organizationConverter.dtoToModel(organizationDto))
         var faceDto = FaceDto()

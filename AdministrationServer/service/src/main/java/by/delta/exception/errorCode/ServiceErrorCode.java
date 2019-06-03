@@ -68,6 +68,9 @@ public enum ServiceErrorCode {
     SORT_PARAMS_FOR_MESSAGE_NOT_EXIST(Constants.ERROR_000185),
 
 
+    //organization validator(000221-000260)
+    REFERENCE_ORGANIZATION_IS_NULL(Constants.ERROR_000221),
+
 
 
     ;
@@ -139,6 +142,8 @@ public enum ServiceErrorCode {
         private static final String ERROR_000183 = "000183";
         private static final String ERROR_000184 = "000184";
         private static final String ERROR_000185 = "000185";
+
+        private static final String ERROR_000221 = "000221";
 
         private Constants() {
         }

@@ -33,7 +33,7 @@ object Helper {
         val allUnpParams = HashMap<String, List<String>>()
         val unpList = ArrayList<String>()
         unpList.add(unp)
-        allUnpParams[ConstParamService.UNP_ORGS] = unpList
+        allUnpParams[ConstParamService.UNP_ORG] = unpList
         return allUnpParams
     }
 

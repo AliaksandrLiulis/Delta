@@ -8,7 +8,7 @@ public class ConstParamService {
     public static final String PATRONYMIC = "patronymic";
     public static final String SEX = "sex";
     public static final String EMAIL = "email";
-    public static final String UNP_ORGS = "orgunp";
+    public static final String UNP_ORG = "orgunp";
     public static final String CHAR_EMAIL_STRING = "@";
     public static final String USER_NICK_NAME_STRING = "User nick name";
     public static final String USER_NAME_STRING = "User name";
@@ -19,6 +19,7 @@ public class ConstParamService {
     public static final String USER_STRING = "User";
     public static final String USER_ID_STRING = "User Id";
     public static final String USER_PASSWORD_STRING = "User password";
+    public static final String ORGANIZATION_STRING = "organization";
 
     public static final String MESSAGE_SUBJECT = "messageSubject";
     public static final String MESSAGE_BODY = "messageBody";
