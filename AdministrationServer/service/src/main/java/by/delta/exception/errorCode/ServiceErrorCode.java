@@ -70,7 +70,18 @@ public enum ServiceErrorCode {
 
     //organization validator(000221-000260)
     REFERENCE_ORGANIZATION_IS_NULL(Constants.ERROR_000221),
-
+    NAME_ORGANIZATION_IS_NULL(Constants.ERROR_000222),
+    NAME_ORGANIZATION_IS_EMPTY(Constants.ERROR_000223),
+    NAME_ORGANIZATION_IS_LONG_SO_MUCH(Constants.ERROR_000224),
+    SHORT_NAME_ORGANIZATION_IS_NULL(Constants.ERROR_000225),
+    SHORT_NAME_ORGANIZATION_IS_EMPTY(Constants.ERROR_000226),
+    SHORT_NAME_ORGANIZATION_IS_LONG_SO_MUCH(Constants.ERROR_000227),
+    ICON_NAME_ORGANIZATION_IS_NULL(Constants.ERROR_000228),
+    ICON_NAME_ORGANIZATION_IS_EMPTY(Constants.ERROR_000229),
+    ICON_NAME_ORGANIZATION_IS_LONG_SO_MUCH(Constants.ERROR_000230),
+    UNP_ORGANIZATION_IS_NULL(Constants.ERROR_000231),
+    UNP_ORGANIZATION_IS_EMPTY(Constants.ERROR_000232),
+    UNP_ORGANIZATION_IS_LONG_SO_MUCH(Constants.ERROR_000233),
 
 
     ;
@@ -144,6 +155,18 @@ public enum ServiceErrorCode {
         private static final String ERROR_000185 = "000185";
 
         private static final String ERROR_000221 = "000221";
+        private static final String ERROR_000222 = "000222";
+        private static final String ERROR_000223 = "000223";
+        private static final String ERROR_000224 = "000224";
+        private static final String ERROR_000225 = "000225";
+        private static final String ERROR_000226 = "000226";
+        private static final String ERROR_000227 = "000227";
+        private static final String ERROR_000228 = "000228";
+        private static final String ERROR_000229 = "000229";
+        private static final String ERROR_000230 = "000230";
+        private static final String ERROR_000231 = "000231";
+        private static final String ERROR_000232 = "000232";
+        private static final String ERROR_000233 = "000233";
 
         private Constants() {
         }

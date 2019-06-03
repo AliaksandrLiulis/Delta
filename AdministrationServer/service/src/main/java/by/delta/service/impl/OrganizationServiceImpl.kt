@@ -9,6 +9,7 @@ import by.delta.service.IFaceService
 import by.delta.service.IOrganizationService
 import by.delta.specification.impl.organization.GeoAllOrganizationByUNP
 import by.delta.util.Helper
+import by.delta.validator.OrganizationValidator
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -18,11 +19,13 @@ import javax.transaction.Transactional
 @Service
 open class OrganizationServiceImpl @Autowired constructor(private val organizationRepositoryImpl: IRepository<Organization>,
                                                           private val organizationConverter: OrganizationConverter,
-                                                          private val faceServiceImpl: IFaceService
+                                                          private val faceServiceImpl: IFaceService,
+                                                          private val organizationValidator: OrganizationValidator
 ) : IOrganizationService {
 
     @Transactional
     override fun createOrganization(organizationDto: OrganizationDto): OrganizationDto {
+        organizationValidator.validate(organizationDto)
         val allOrg = organizationRepositoryImpl.query(GeoAllOrganizationByUNP(Helper.getWraperUNPOrganization(organizationDto.orgUNP)), 1, 0)
         if (!CollectionUtils.isEmpty(allOrg)) {
             return organizationConverter.modelToDto(allOrg[0])

@@ -20,6 +20,10 @@ public class ConstParamService {
     public static final String USER_ID_STRING = "User Id";
     public static final String USER_PASSWORD_STRING = "User password";
     public static final String ORGANIZATION_STRING = "organization";
+    public static final String ORGANIZATION_NAME_STRING = "organization name";
+    public static final String ORGANIZATION_SHORT_NAME_STRING = "organization name";
+    public static final String ORGANIZATION_ICON_NAME_STRING = "organization icon name";
+    public static final String ORGANIZATION_UNP_NAME_STRING = "organization UNP name";
 
     public static final String MESSAGE_SUBJECT = "messageSubject";
     public static final String MESSAGE_BODY = "messageBody";
