@@ -1,7 +1,8 @@
-package by.delta.util
+package by.delta.validator.paramsvalidator.abstractvalidator
 
 import by.delta.exception.ValidationException
 import by.delta.exception.errorCode.ServiceErrorCode
+import by.delta.util.ConstParamService
 import org.slf4j.LoggerFactory
 import org.springframework.util.CollectionUtils
 
@@ -10,7 +11,6 @@ object PagingParamsValidator {
     private val LOGGER = LoggerFactory.getLogger(PagingParamsValidator::class.java)
 
     fun checkRequestParams(allRequestParams: MutableMap<String, String>) {
-
         if (!CollectionUtils.isEmpty(allRequestParams)) {
             if (allRequestParams.containsKey(ConstParamService.LIMIT)) {
                 checkLimitParams(allRequestParams.getValue(ConstParamService.LIMIT))

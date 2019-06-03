@@ -8,9 +8,10 @@ import by.delta.service.IFaceService
 import by.delta.service.IMessageService
 import by.delta.specification.impl.message.GetUserMessagesByFaceId
 import by.delta.util.ConstParamService
-import by.delta.util.PagingParamsValidator
+import by.delta.validator.paramsvalidator.abstractvalidator.PagingParamsValidator
 import by.delta.util.Helper
 import by.delta.validator.MessageValidator
+import by.delta.validator.paramsvalidator.MessageParametersValidator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
@@ -22,8 +23,9 @@ import java.time.LocalDate
 open class MessageServiceImpl @Autowired constructor(private val messageConverter: MessageConverter,
                                                      private val messageValidator: MessageValidator,
                                                      private val messageRepository: IRepository<Message>,
-                                                     private val faceService: IFaceService)
-    : IMessageService {
+                                                     private val faceService: IFaceService,
+                                                     private val messageParametersValidator: MessageParametersValidator
+) : IMessageService {
 
     @Transactional
     override fun createMessage(authentication: Authentication, messageDto: MessageDto): MessageDto {
@@ -35,8 +37,10 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
 
     override fun getUserMessages(authentication: Authentication, allRequestParams: MutableMap<String, String>): Set<MessageDto> {
         val faceDto = faceService.getFaceByUserEmail(authentication.name)
-        PagingParamsValidator.checkRequestParams(allRequestParams)
-        val messages = messageRepository.query(GetUserMessagesByFaceId(Helper.getWraperId(faceDto.id)),
+        var newParams = messageParametersValidator.validate(allRequestParams)
+        val list:List<String> = listOf(faceDto.id.toString())
+        newParams[ConstParamService.ID] = list
+        val messages = messageRepository.query(GetUserMessagesByFaceId(newParams),
                 allRequestParams.getValue(ConstParamService.LIMIT).toInt(), allRequestParams.getValue(ConstParamService.OFFSET).toInt())
         return messageConverter.modelToDtoList(messages.toSet())
     }

@@ -60,6 +60,14 @@ public enum ServiceErrorCode {
     PAGING_PAGE_LESS_THAN_1(Constants.ERROR_000153),
 
 
+    //sort parameters validation(000181-000210)
+    ERROR_SORT_PARAMS(Constants.ERROR_000181),
+    SORT_PARAMS_FOR_USERS_NOT_EXIST(Constants.ERROR_000182),
+    KEY_PARAMS_FOR_USERS_NOT_EXIST(Constants.ERROR_000183),
+    KEY_PARAMS_FOR_MESSAGE_NOT_EXIST(Constants.ERROR_000184),
+    SORT_PARAMS_FOR_MESSAGE_NOT_EXIST(Constants.ERROR_000185),
+
+
 
 
     ;
@@ -125,6 +133,12 @@ public enum ServiceErrorCode {
         private static final String ERROR_000151 = "000151";
         private static final String ERROR_000152 = "000152";
         private static final String ERROR_000153 = "000153";
+
+        private static final String ERROR_000181 = "000181";
+        private static final String ERROR_000182 = "000182";
+        private static final String ERROR_000183 = "000183";
+        private static final String ERROR_000184 = "000184";
+        private static final String ERROR_000185 = "000185";
 
         private Constants() {
         }

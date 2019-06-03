@@ -13,9 +13,8 @@ import by.delta.specification.impl.user.GetAllUsers
 import by.delta.specification.impl.user.GetUserByEmail
 import by.delta.util.ConstParamService
 import by.delta.util.Helper
-import by.delta.util.PagingParamsValidator
 import by.delta.validator.UserValidator
-import org.slf4j.Logger
+import by.delta.validator.paramsvalidator.UserParametersValidator
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.GrantedAuthority
@@ -35,7 +34,8 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
                                                   private val userConverter: IConverter<User, UserDto>,
                                                   private val userRepository: IRepository<User>,
                                                   private val userValidator: UserValidator,
-                                                  private val faceService: FaceServiceImpl
+                                                  private val faceService: FaceServiceImpl,
+                                                  private val userParametersValidator: UserParametersValidator
 ) : UserDetailsService, IUserService {
 
     override fun loadUserByUsername(str: String): UserDetails {
@@ -68,9 +68,8 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
     }
 
     override fun getAllUsers(allRequestParams: MutableMap<String, String>): Set<UserDto> {
-        PagingParamsValidator.checkRequestParams(allRequestParams)
-
-        return userConverter.modelToDtoList(userRepository.query(GetAllUsers(null),
+        val newParams = userParametersValidator.validate(allRequestParams)
+        return userConverter.modelToDtoList(userRepository.query(GetAllUsers(newParams),
                 allRequestParams.getValue(ConstParamService.LIMIT).toInt(),
                 allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet())
     }

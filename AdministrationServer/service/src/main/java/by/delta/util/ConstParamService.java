@@ -19,8 +19,6 @@ public class ConstParamService {
     public static final String USER_ID_STRING = "User Id";
     public static final String USER_PASSWORD_STRING = "User password";
 
-
-
     public static final String MESSAGE_SUBJECT = "messageSubject";
     public static final String MESSAGE_BODY = "messageBody";
     public static final String MESSAGE_REPLY = "replyMessage";
@@ -33,14 +31,16 @@ public class ConstParamService {
     public static final String RECIPIENT_ID_STRING = "Recipient id for message";
     public static final String SEND_DATE = "sendDate";
 
-
     public static final String RECIPIENT_ID = "recipientId";
-
 
     public static final String LIMIT = "limit";
     public static final String OFFSET = "offset";
     public static final String PAGE = "page";
     public static final String LIMIT_PARAMS_STRING = "limit params";
     public static final String PAGE_PARAMS_STRING = "page params";
+
+    public static final String SORT_KEY = "sort";
+
+
 
 }
