@@ -28,12 +28,15 @@ public class ConstParamService {
     public static final String MESSAGE_SUBJECT = "messageSubject";
     public static final String MESSAGE_BODY = "messageBody";
     public static final String MESSAGE_REPLY = "replyMessage";
-    public static final String FACE_ID = "faceId";
+    public static final String FACE_ID = "faceid";
+    public static final String COUNT_STRING = "count";
+    public static final String RECORDS_STRING = "records";
     public static final String MESSAGE_STRING = "Message";
     public static final String MESSAGE_ID_STRING = "Message id";
     public static final String SUBJECT_STRING = "Subject for message";
     public static final String BODY_STRING = "Body for message";
     public static final String FACE_ID_STRING = "face Id";
+    public static final String AUTHENTICATION_STRING = "Authentication params";
     public static final String REPLY_STRING = "Reply code for message";
     public static final String RECIPIENT_ID_STRING = "Recipient id for message";
     public static final String SEND_DATE = "sendDate";

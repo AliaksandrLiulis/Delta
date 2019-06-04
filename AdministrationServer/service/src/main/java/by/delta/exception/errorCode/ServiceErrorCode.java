@@ -87,6 +87,9 @@ public enum ServiceErrorCode {
     UNP_ORGANIZATION_IS_EMPTY(Constants.ERROR_000232),
     UNP_ORGANIZATION_IS_LONG_SO_MUCH(Constants.ERROR_000233),
 
+    //organization validator(000261-000280)
+    REFERENCE_AUTHENTICATION_IS_NULL(Constants.ERROR_000261),
+
 
     ;
 
@@ -175,6 +178,8 @@ public enum ServiceErrorCode {
         private static final String ERROR_000231 = "000231";
         private static final String ERROR_000232 = "000232";
         private static final String ERROR_000233 = "000233";
+
+        private static final String ERROR_000261 = "000261";
 
         private Constants() {
         }

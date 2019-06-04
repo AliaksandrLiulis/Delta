@@ -77,8 +77,8 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         val users =  userConverter.modelToDtoList(userRepository.query(GetAllUsers(newParams),
                 allRequestParams.getValue(ConstParamService.LIMIT).toInt(),
                 allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet())
-        mapParams["count"] = countOfUsers.toString()
-        mapParams["records"] = users
+        mapParams[ConstParamService.COUNT_STRING] = countOfUsers.toString()
+        mapParams[ConstParamService.RECORDS_STRING] = users
         return mapParams
     }
 

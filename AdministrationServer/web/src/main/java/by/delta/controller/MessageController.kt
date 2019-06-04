@@ -15,18 +15,18 @@ open class MessageController @Autowired constructor(private val messageService: 
 
     @PostMapping(consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)
-    fun createMessage(authentication: Authentication, @RequestBody resource: MessageDto): MessageDto =
+    fun createMessage(authentication: Authentication?, @RequestBody resource: MessageDto): MessageDto =
             messageService.createMessage(authentication, resource)
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun getUserMessages(authentication: Authentication, @RequestParam allRequestParams: MutableMap <String, String>):Map<String, Any> {
+    fun getUserMessages(authentication: Authentication?, @RequestParam allRequestParams: MutableMap <String, String>):Map<String, Any> {
         return messageService.getUserMessages(authentication, allRequestParams)
     }
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getMessageById(authentication: Authentication, @PathVariable("id")id:Long):Set<MessageDto> {
+    fun getMessageById(authentication: Authentication?, @PathVariable("id")id:Long):Set<MessageDto> {
         return messageService.getMessageById(authentication, id)
     }
 
