@@ -15,10 +15,12 @@ import by.delta.specification.impl.user.GetUserByEmail
 import by.delta.specification.impl.user.countspecification.GetCountOfUsers
 import by.delta.util.ConstParamService
 import by.delta.util.Helper
+import by.delta.validator.AuthenticationValidator
 import by.delta.validator.UserValidator
 import by.delta.validator.paramsvalidator.UserParametersValidator
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -28,6 +30,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
+import org.springframework.util.StringUtils
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
@@ -38,7 +41,9 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
                                                   private val userRepository: IRepository<User>,
                                                   private val userValidator: UserValidator,
                                                   private val faceService: FaceServiceImpl,
-                                                  private val userParametersValidator: UserParametersValidator
+                                                  private val userParametersValidator: UserParametersValidator,
+                                                  private val authenticationValidator: AuthenticationValidator
+
 ) : UserDetailsService, IUserService {
 
     override fun loadUserByUsername(str: String): UserDetails {
@@ -82,6 +87,18 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         return mapParams
     }
 
+    @Transactional
+    override fun updateUser(authentication: Authentication, userDto: UserDto): UserDto {
+        authenticationValidator.validate(authentication)
+        var savedUserDto:UserDto= checkAndGetUserByEmail(authentication.name)
+        if (!StringUtils.isEmpty(userDto.name)){
+            checkExistUserByName(userDto.name)
+        }
+        userValidator.validateUserForUpdate(userDto)
+        getUserForUpdate(savedUserDto, userDto)
+        return userConverter.modelToDto(userRepository.update(userConverter.dtoToModel(savedUserDto)))
+    }
+
     private fun createFaceDtoForSavedUserDto(email: String, user: UserDto): FaceDto {
         val faceDto = FaceDto()
         faceDto.faceName = email
@@ -101,6 +118,15 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         return userRepository.query(GetUserByEmail(Helper.getWraperEmail(email)), 1, 0)
     }
 
+    private fun checkAndGetUserByEmail(email: String):UserDto{
+        val savedUser = getUserByEmail(email)
+        if (CollectionUtils.isEmpty(savedUser)) {
+            LOGGER.error("User with such e-mail not exist")
+            throw ModelSameServiceException(ServiceErrorCode.EMAIL_USER_NOT_EXISTS, ConstParamService.USER_EMAIL_STRING)
+        }
+        return userConverter.modelToDto(savedUser[0])
+    }
+
     private fun checkExistUserByName(name: String) {
         if (!CollectionUtils.isEmpty(getUserByName(name))) {
             LOGGER.error("User with such name exist")
@@ -112,6 +138,27 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         if (!CollectionUtils.isEmpty(getUserByEmail(email))) {
             LOGGER.error("User with such e-mail exist")
             throw ModelSameServiceException(ServiceErrorCode.EMAIL_USER_EXISTS, ConstParamService.USER_EMAIL_STRING)
+        }
+    }
+
+    private fun getUserForUpdate(savedUserDto: UserDto, requestUserDto:UserDto){
+        if (!StringUtils.isEmpty(requestUserDto.nickName)){
+            savedUserDto.nickName = requestUserDto.nickName
+        }
+        if (!StringUtils.isEmpty(requestUserDto.name)){
+            savedUserDto.name = requestUserDto.name
+        }
+        if (!StringUtils.isEmpty(requestUserDto.surName)){
+            savedUserDto.surName = requestUserDto.surName
+        }
+        if (!StringUtils.isEmpty(requestUserDto.patronymic)){
+            savedUserDto.patronymic = requestUserDto.patronymic
+        }
+        if (!StringUtils.isEmpty(requestUserDto.sex)){
+            savedUserDto.sex = requestUserDto.sex
+        }
+        if (!StringUtils.isEmpty(requestUserDto.birthDay)){
+            savedUserDto.birthDay = requestUserDto.birthDay
         }
     }
 

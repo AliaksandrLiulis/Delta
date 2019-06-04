@@ -48,14 +48,20 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
 
     override fun getUserMessages(authentication: Authentication?, allRequestParams: MutableMap<String, String>): Map<String, Any> {
         authenticationValidator.validate(authentication)
+        //Get user by authentication
         val faceDto = faceService.getFaceByUserEmail(authentication!!.name)
+        //Create new params and validate old
         var newParams = messageParametersValidator.validate(allRequestParams)
-        var mapParams = HashMap<String, Any>()
+        //Add Id User to new parameters
         val list = listOf(faceDto.id.toString())
         newParams[ConstParamService.ID] = list
+        //Get count of records
         val countOfMessages = messageRepository.countQuery(GetCountOfMessage(newParams))
+        //Get records
         val messages = messageRepository.query(GetUserMessagesByFaceId(newParams),
-                allRequestParams.getValue(ConstParamService.LIMIT).toInt(), allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet()
+                newParams.getValue(ConstParamService.LIMIT)[0].toInt(), newParams.getValue(ConstParamService.OFFSET)[0].toInt()).toSet()
+        //add count and records to response
+        var mapParams = HashMap<String, Any>()
         mapParams[ConstParamService.COUNT_STRING] = countOfMessages.toString()
         mapParams[ConstParamService.RECORDS_STRING] = messageConverter.modelToDtoList(messages)
         return mapParams
@@ -64,11 +70,16 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
     override fun getMessageById(authentication: Authentication?, id: Long): Set<MessageDto> {
         authenticationValidator.validate(authentication)
         messageValidator.checkId(id)
+        //Get user by authentication
         val faceDto = faceService.getFaceByUserEmail(authentication!!.name)
+        //Create new params with message Id
         var newParams: MutableMap<String, List<String>> = Helper.getWraperId(id)
+        //Add Id User to new parameters
         val list = listOf(faceDto.id.toString())
         newParams[ConstParamService.FACE_ID] = list
+        //Get records
         val messages = messageRepository.query(GetUserMessageByMessageId(newParams), 1, 0).toSet()
+        //Generate message if messages for user not exist
         if (CollectionUtils.isEmpty(messages)) {
             LOGGER.error("Messages for this user not exist")
             throw MessageError(ServiceErrorCode.MESSAGE_USER_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)

@@ -48,6 +48,39 @@ public class UserValidator {
         validatePassword(userDto);
     }
 
+    public void validateUserForUpdate(final UserDto userDto) {
+        CommonValidator.checkNullObject(userDto, "User reference is null", ServiceErrorCode.REFERENCE_USER_IS_NULL, ConstParamService.USER_STRING);
+
+        if (userDto.getNickName() != null) {
+            userDto.setNickName(userDto.getNickName().trim());
+            validateNickName(userDto);
+        }
+
+        if (userDto.getName() != null) {
+            userDto.setName(userDto.getName().trim());
+            validateName(userDto);
+        }
+
+        if (userDto.getSurName() != null) {
+            userDto.setSurName(userDto.getSurName().trim());
+            validateSurName(userDto);
+        }
+
+        if (userDto.getPatronymic() != null) {
+            userDto.setPatronymic(userDto.getPatronymic().trim());
+            validatePatronymic(userDto);
+        }
+
+        if (userDto.getSex() != null) {
+            userDto.setSex(userDto.getSex().trim());
+            validateSex(userDto);
+        }
+
+        if (userDto.getPassword() != null) {
+            userDto.setPassword(userDto.getPassword().trim());
+        }
+    }
+
     public void checkId(final Long id) {
         CommonValidator.checkIdNullParams(id, "User id is null", ServiceErrorCode.ID_USER_IS_NULL, ConstParamService.USER_ID_STRING);
         CommonValidator.checkIdLengthParams(id, 10, "User Id is long so much", ServiceErrorCode.ID_USER_IS_LONG_SO_MUCH, ConstParamService.USER_ID_STRING);

@@ -6,6 +6,7 @@ import by.delta.service.IUserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -23,5 +24,11 @@ open class UserController @Autowired constructor(private val userService: IUserS
     @ResponseStatus(HttpStatus.OK)
     fun getAllUsers(@RequestParam allRequestParams: MutableMap <String, String>): Map<String, Any> {
         return userService.getAllUsers(allRequestParams)
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    fun updateUsers(authentication: Authentication, @RequestBody resource: UserDto): UserDto{
+        return userService.updateUser(authentication, resource)
     }
 }
