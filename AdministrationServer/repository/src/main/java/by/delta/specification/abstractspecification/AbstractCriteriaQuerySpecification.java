@@ -35,8 +35,10 @@ public class AbstractCriteriaQuerySpecification<Entity extends AbstractModel> {
                 list.forEach(s -> {
                     if (s.contains("-")) {
                         s = s.replaceAll("-", "");
+                        s = replaceParameters(s);
                         orderList.add(criteriaBuilder.desc(root.get(s)));
                     } else {
+                        s = replaceParameters(s);
                         orderList.add(criteriaBuilder.asc(root.get(s)));
 
                     }
@@ -80,6 +82,47 @@ public class AbstractCriteriaQuerySpecification<Entity extends AbstractModel> {
             }
         }
         return orClause;
+    }
+
+    private String replaceParameters(String s){
+
+        if (s.equalsIgnoreCase("id")){
+            return "id";
+        }
+        if (s.equalsIgnoreCase("messageSubject")){
+            return "messageSubject";
+        }
+        if (s.equalsIgnoreCase("messageBody")){
+            return "messageBody";
+        }
+        if (s.equalsIgnoreCase("createDate")){
+            return "createDate";
+        }
+        if (s.equalsIgnoreCase("sendDate")){
+            return "sendDate";
+        }
+        if (s.equalsIgnoreCase("nickName")){
+            return "nickName";
+        }
+        if (s.equalsIgnoreCase("name")){
+            return "name";
+        }
+        if (s.equalsIgnoreCase("surName")){
+            return "surName";
+        }
+        if (s.equalsIgnoreCase("patronymic")){
+            return "patronymic";
+        }
+        if (s.equalsIgnoreCase("email")){
+            return "email";
+        }
+        if (s.equalsIgnoreCase("birthDay")){
+            return "birthDay";
+        }
+        if (s.equalsIgnoreCase("sex")){
+            return "sex";
+        }
+        return "id";
     }
 
 }
