@@ -24,7 +24,17 @@ class MessageParametersValidator: AbstractParamsValidator() {
 
     override fun checkResolvedSortParameters(sortedParameters: List<String>) {
         sortedParameters.forEach { sortVal: String ->
-            if (!sortVal.equals("id", ignoreCase = true) && !sortVal.equals("-id", ignoreCase = true)) {
+            if (!sortVal.equals("id", ignoreCase = true)
+                    && !sortVal.equals("-id", ignoreCase = true)
+                    && !sortVal.equals("messageSubject", ignoreCase = true)
+                    && !sortVal.equals("-messageSubject", ignoreCase = true)
+                    && !sortVal.equals("messageBody", ignoreCase = true)
+                    && !sortVal.equals("-messageBody", ignoreCase = true)
+                    && !sortVal.equals("createDate", ignoreCase = true)
+                    && !sortVal.equals("-createDate", ignoreCase = true)
+                    && !sortVal.equals("sendDate", ignoreCase = true)
+                    && !sortVal.equals("-sendDate", ignoreCase = true)
+            ) {
                LOGGER.error("Value sort not exist")
                 throw ValidationException(ServiceErrorCode.SORT_PARAMS_FOR_MESSAGE_NOT_EXIST, sortVal)
             }

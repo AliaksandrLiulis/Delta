@@ -5,10 +5,7 @@ import by.delta.specification.RepositoryConstParams;
 import by.delta.specification.abstractspecification.AbstractCriteriaQuerySpecification;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,4 +30,49 @@ public class GetUserMessagesByFaceId extends AbstractCriteriaQuerySpecification<
         }
         return conditionList;
     }
+    @Override
+    protected CriteriaQuery<Message> getOrderQuery(final CriteriaQuery<Message> query, final Root<Message> root, final CriteriaBuilder criteriaBuilder) {
+        List<Order> orderList = new ArrayList();
+        if (!CollectionUtils.isEmpty(params)) {
+            List<String> allSortParams = params.get(RepositoryConstParams.STRING_SORT);
+            if (allSortParams != null) {
+                List<String> list = allSortParams;
+                list.forEach(s -> {
+                    if (s.contains("-")) {
+                        s = s.replaceAll("-", "");
+                        s = replaceParameters(s);
+                        orderList.add(criteriaBuilder.desc(root.get(s)));
+                    } else {
+                        s = replaceParameters(s);
+                        orderList.add(criteriaBuilder.asc(root.get(s)));
+
+                    }
+                });
+                return query.orderBy(orderList);
+            }
+        }
+        return query.orderBy(criteriaBuilder.asc(root.get(RepositoryConstParams.ID_KEY)));
+    }
+
+    private String replaceParameters(String s){
+
+        if (s.equalsIgnoreCase("id")){
+            return "id";
+        }
+        if (s.equalsIgnoreCase("messageSubject")){
+            return "messageSubject";
+        }
+        if (s.equalsIgnoreCase("messageBody")){
+            return "messageBody";
+        }
+        if (s.equalsIgnoreCase("createDate")){
+            return "createDate";
+        }
+        if (s.equalsIgnoreCase("sendDate")){
+            return "sendDate";
+        }
+        return "id";
+    }
+
+
 }
