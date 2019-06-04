@@ -10,4 +10,6 @@ interface IUserService {
     fun getUserByEmail(email: String): List<User>
     fun getAllUsers(allRequestParams: MutableMap <String, String>): Map<String, Any>
     fun updateUser(authentication: Authentication, userDto: UserDto): UserDto
+    fun checkAndGetUserByEmail(email: String): UserDto
+    fun getUserById(idUser: Long):UserDto
 }

@@ -2,24 +2,18 @@ package by.delta.dto;
 
 import by.delta.dto.abstractdto.AbstractDto;
 import by.delta.model.Face;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class IncomingDto extends AbstractDto {
 
     private Integer topicMessage;
 
     private Integer messageState;
 
-    private Face face;
+    private FaceDto faceDto;
 
     private MessageDto messageDto;
-
-    public Face getFace() {
-        return face;
-    }
-
-    public void setFace(Face face) {
-        this.face = face;
-    }
 
     public Integer getTopicMessage() {
         return topicMessage;
@@ -37,6 +31,14 @@ public class IncomingDto extends AbstractDto {
         this.messageState = messageState;
     }
 
+    public FaceDto getFaceDto() {
+        return faceDto;
+    }
+
+    public void setFaceDto(FaceDto faceDto) {
+        this.faceDto = faceDto;
+    }
+
     public MessageDto getMessageDto() {
         return messageDto;
     }
@@ -48,9 +50,9 @@ public class IncomingDto extends AbstractDto {
     @Override
     public String toString() {
         return "IncomingDto{" +
-                "face=" + face +
-                ", topicMessage=" + topicMessage +
+                "topicMessage=" + topicMessage +
                 ", messageState=" + messageState +
+                ", faceDto=" + faceDto +
                 ", messageDto=" + messageDto +
                 '}';
     }

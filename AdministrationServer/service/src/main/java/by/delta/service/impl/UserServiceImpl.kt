@@ -12,6 +12,7 @@ import by.delta.service.IUserService
 import by.delta.specification.impl.user.GetAllUserByName
 import by.delta.specification.impl.user.GetAllUsers
 import by.delta.specification.impl.user.GetUserByEmail
+import by.delta.specification.impl.user.GetUserById
 import by.delta.specification.impl.user.countspecification.GetCountOfUsers
 import by.delta.util.ConstParamService
 import by.delta.util.Helper
@@ -99,15 +100,13 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         return userConverter.modelToDto(userRepository.update(userConverter.dtoToModel(savedUserDto)))
     }
 
-    private fun createFaceDtoForSavedUserDto(email: String, user: UserDto): FaceDto {
-        val faceDto = FaceDto()
-        faceDto.faceName = email
-        faceDto.userDto = user
-        return faceDto
-    }
-
-    private fun getAuthority(user: User): MutableCollection<out GrantedAuthority>? {
-        return Arrays.asList(SimpleGrantedAuthority(user.role.toString()))
+    override fun getUserById(idUser: Long): UserDto {
+        val existUser =  userRepository.query(GetUserById(Helper.getWraperId(idUser)), 1, 0)
+        if (CollectionUtils.isEmpty(existUser)) {
+            LOGGER.error("User with such id not exist")
+            throw ModelSameServiceException(ServiceErrorCode.ID_USER_NOT_EXISTS, ConstParamService.USER_ID_STRING)
+        }
+        return userConverter.modelToDto(existUser[0])
     }
 
     private fun getUserByName(userName: String): List<User> {
@@ -118,7 +117,7 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         return userRepository.query(GetUserByEmail(Helper.getWraperEmail(email)), 1, 0)
     }
 
-    private fun checkAndGetUserByEmail(email: String): UserDto {
+    override fun checkAndGetUserByEmail(email: String): UserDto {
         val savedUser = getUserByEmail(email)
         if (CollectionUtils.isEmpty(savedUser)) {
             LOGGER.error("User with such e-mail not exist")
@@ -139,6 +138,17 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
             LOGGER.error("User with such e-mail exist")
             throw ModelSameServiceException(ServiceErrorCode.EMAIL_USER_EXISTS, ConstParamService.USER_EMAIL_STRING)
         }
+    }
+
+    private fun createFaceDtoForSavedUserDto(email: String, user: UserDto): FaceDto {
+        val faceDto = FaceDto()
+        faceDto.faceName = email
+        faceDto.userDto = user
+        return faceDto
+    }
+
+    private fun getAuthority(user: User): MutableCollection<out GrantedAuthority>? {
+        return Arrays.asList(SimpleGrantedAuthority(user.role.toString()))
     }
 
     private fun getUserForUpdate(savedUserDto: UserDto, requestUserDto: UserDto) {

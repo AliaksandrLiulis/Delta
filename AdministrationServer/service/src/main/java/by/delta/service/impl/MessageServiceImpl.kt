@@ -2,19 +2,17 @@ package by.delta.service.impl
 
 import by.delta.converter.impl.MessageConverter
 import by.delta.dto.MessageDto
-import by.delta.dto.UserDto
 import by.delta.exception.MessageError
-import by.delta.exception.ModelSameServiceException
 import by.delta.exception.errorCode.ServiceErrorCode
 import by.delta.model.Message
 import by.delta.repository.IRepository
 import by.delta.service.IFaceService
 import by.delta.service.IMessageService
+import by.delta.specification.impl.message.GetMessageById
 import by.delta.specification.impl.message.GetUserMessageByMessageId
 import by.delta.specification.impl.message.GetUserMessagesByFaceId
 import by.delta.specification.impl.message.countSpecification.GetCountOfMessage
 import by.delta.util.ConstParamService
-import by.delta.validator.paramsvalidator.abstractvalidator.PagingParamsValidator
 import by.delta.util.Helper
 import by.delta.validator.AuthenticationValidator
 import by.delta.validator.MessageValidator
@@ -82,10 +80,19 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
         //Generate message if messages for user not exist
         if (CollectionUtils.isEmpty(messages)) {
             LOGGER.error("Messages for this user not exist")
-            throw MessageError(ServiceErrorCode.MESSAGE_USER_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)
+            throw MessageError(ServiceErrorCode.MESSAGE_ID_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)
         }
         return messageConverter.modelToDtoList(messages)
+    }
 
+    override fun checkAndgetMessageById(id: Long): MessageDto {
+        messageValidator.checkId(id)
+        val messages = messageRepository.query(GetMessageById(Helper.getWraperId(id)), 1, 0)
+        if (CollectionUtils.isEmpty(messages)) {
+            LOGGER.error("Messages with such id not exist")
+            throw MessageError(ServiceErrorCode.MESSAGE_ID_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)
+        }
+        return messageConverter.modelToDto(messages[0])
     }
 
     companion object {
