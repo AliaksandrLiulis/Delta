@@ -73,7 +73,7 @@ public enum ServiceErrorCode {
     SORT_PARAMS_FOR_MESSAGE_NOT_EXIST(Constants.ERROR_000185),
 
 
-    //organization validator(000221-000260)
+    //organization validation(000221-000260)
     REFERENCE_ORGANIZATION_IS_NULL(Constants.ERROR_000221),
     NAME_ORGANIZATION_IS_NULL(Constants.ERROR_000222),
     NAME_ORGANIZATION_IS_EMPTY(Constants.ERROR_000223),
