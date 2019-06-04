@@ -36,4 +36,10 @@ public class GlobalExceptionHandler {
     public ErrorDto handleValidationException(ValidationException e) {
         return validationMessage(e.getMessage(), e.getArgument());
     }
+
+    @ExceptionHandler(MessageError.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorDto handleMessageError(MessageError e) {
+        return validationMessage(e.getMessage(), e.getArgument());
+    }
 }

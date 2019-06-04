@@ -25,6 +25,13 @@ public class MessageValidator {
         checkMessageBody(messageDto);
     }
 
+    public void checkId(final Long id) {
+        CommonValidator.checkIdNullParams(id, "Message id is null", ServiceErrorCode.ID_MESSAGE_IS_NULL, ConstParamService.MESSAGE_ID_STRING);
+        CommonValidator.checkIdLengthParams(id, 10, "Message Id is long so much", ServiceErrorCode.ID_MESSAGE_IS_LONG_SO_MUCH, ConstParamService.MESSAGE_ID_STRING);
+        CommonValidator.checkIdLessParams(id, 0, "Message id is less than 0", ServiceErrorCode.ID_MESSAGE_IS_LESS_THAN_0, ConstParamService.MESSAGE_ID_STRING);
+        CommonValidator.checkIdEqualsParams(id, 0, "Message id equals 0", ServiceErrorCode.ID_MESSAGE_IS_EQUALS_0, ConstParamService.MESSAGE_ID_STRING);
+    }
+
     private void checkMessageSubject(final MessageDto messageDto) {
         CommonValidator.checkNullStringParams(messageDto.getMessageSubject(), "subject of message is null", ServiceErrorCode.MESSAGE_SUBJECT_IS_NULL, ConstParamService.SUBJECT_STRING);
         CommonValidator.checkEmptyStringParams(messageDto.getMessageSubject(), "subject of message is Empty", ServiceErrorCode.MESSAGE_SUBJECT_IS_EMPTY, ConstParamService.SUBJECT_STRING);

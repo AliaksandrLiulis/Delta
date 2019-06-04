@@ -7,4 +7,5 @@ interface IMessageService {
 
     fun createMessage(authentication: Authentication, messageDto: MessageDto): MessageDto
     fun getUserMessages(authentication: Authentication, allRequestParams: MutableMap <String,String>): Map<String, Any>
+    fun getMessageById(authentication: Authentication, id:Long): Set<MessageDto>
 }

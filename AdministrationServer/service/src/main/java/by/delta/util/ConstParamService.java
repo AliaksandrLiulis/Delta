@@ -30,6 +30,7 @@ public class ConstParamService {
     public static final String MESSAGE_REPLY = "replyMessage";
     public static final String FACE_ID = "faceId";
     public static final String MESSAGE_STRING = "Message";
+    public static final String MESSAGE_ID_STRING = "Message id";
     public static final String SUBJECT_STRING = "Subject for message";
     public static final String BODY_STRING = "Body for message";
     public static final String FACE_ID_STRING = "face Id";

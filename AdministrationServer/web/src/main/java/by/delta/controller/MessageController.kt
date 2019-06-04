@@ -24,4 +24,10 @@ open class MessageController @Autowired constructor(private val messageService: 
         return messageService.getUserMessages(authentication, allRequestParams)
     }
 
+    @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getMessageById(authentication: Authentication, @PathVariable("id")id:Long):Set<MessageDto> {
+        return messageService.getMessageById(authentication, id)
+    }
+
 }
