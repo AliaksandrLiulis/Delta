@@ -5,11 +5,11 @@ import by.delta.model.Face;
 
 public class IncomingDto extends AbstractDto {
 
-    private Face face;
-
     private Integer topicMessage;
 
     private Integer messageState;
+
+    private Face face;
 
     private MessageDto messageDto;
 
