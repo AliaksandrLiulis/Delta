@@ -9,38 +9,9 @@ import org.springframework.stereotype.Component;
 public class UserValidator {
 
     public void validate(final UserDto userDto) {
-        CommonValidator.checkNullObject(userDto, "User reference is null", ServiceErrorCode.REFERENCE_USER_IS_NULL, ConstParamService.USER_STRING);
+        validateUserForUpdate(userDto);
         if (userDto.getEmail() != null && userDto.getPassword() != null) {
             userDto.setEmail(userDto.getEmail().trim());
-            userDto.setPassword(userDto.getPassword().trim());
-        }
-
-        if (userDto.getNickName() != null) {
-            userDto.setNickName(userDto.getNickName().trim());
-            validateNickName(userDto);
-        }
-
-        if (userDto.getName() != null) {
-            userDto.setName(userDto.getName().trim());
-            validateName(userDto);
-        }
-
-        if (userDto.getSurName() != null) {
-            userDto.setSurName(userDto.getSurName().trim());
-            validateSurName(userDto);
-        }
-
-        if (userDto.getPatronymic() != null) {
-            userDto.setPatronymic(userDto.getPatronymic().trim());
-            validatePatronymic(userDto);
-        }
-
-        if (userDto.getSex() != null) {
-            userDto.setSex(userDto.getSex().trim());
-            validateSex(userDto);
-        }
-
-        if (userDto.getPassword() != null) {
             userDto.setPassword(userDto.getPassword().trim());
         }
 

@@ -59,9 +59,9 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
         val countOfMessages = messageRepository.countQuery(GetCountOfMessage(newParams))
         //Get records
         val messages = messageRepository.query(GetUserMessagesByFaceId(newParams),
-                newParams.getValue(ConstParamService.LIMIT)[0].toInt(), newParams.getValue(ConstParamService.OFFSET)[0].toInt()).toSet()
+                allRequestParams.getValue(ConstParamService.LIMIT).toInt(), allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet()
         //add count and records to response
-        var mapParams = HashMap<String, Any>()
+        var mapParams = LinkedHashMap<String, Any>()
         mapParams[ConstParamService.COUNT_STRING] = countOfMessages.toString()
         mapParams[ConstParamService.RECORDS_STRING] = messageConverter.modelToDtoList(messages)
         return mapParams

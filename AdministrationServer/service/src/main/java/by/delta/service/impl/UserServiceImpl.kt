@@ -75,11 +75,11 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         return savedUser
     }
 
-    override fun getAllUsers(allRequestParams: MutableMap<String, String>):  Map<String, Any> {
+    override fun getAllUsers(allRequestParams: MutableMap<String, String>): Map<String, Any> {
         val newParams = userParametersValidator.validate(allRequestParams)
-        var mapParams = HashMap<String, Any>()
+        var mapParams = LinkedHashMap<String, Any>()
         val countOfUsers = userRepository.countQuery(GetCountOfUsers(newParams))
-        val users =  userConverter.modelToDtoList(userRepository.query(GetAllUsers(newParams),
+        val users = userConverter.modelToDtoList(userRepository.query(GetAllUsers(newParams),
                 allRequestParams.getValue(ConstParamService.LIMIT).toInt(),
                 allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet())
         mapParams[ConstParamService.COUNT_STRING] = countOfUsers.toString()
@@ -90,8 +90,8 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
     @Transactional
     override fun updateUser(authentication: Authentication, userDto: UserDto): UserDto {
         authenticationValidator.validate(authentication)
-        var savedUserDto:UserDto= checkAndGetUserByEmail(authentication.name)
-        if (!StringUtils.isEmpty(userDto.name)){
+        var savedUserDto: UserDto = checkAndGetUserByEmail(authentication.name)
+        if (!StringUtils.isEmpty(userDto.name)) {
             checkExistUserByName(userDto.name)
         }
         userValidator.validateUserForUpdate(userDto)
@@ -118,7 +118,7 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         return userRepository.query(GetUserByEmail(Helper.getWraperEmail(email)), 1, 0)
     }
 
-    private fun checkAndGetUserByEmail(email: String):UserDto{
+    private fun checkAndGetUserByEmail(email: String): UserDto {
         val savedUser = getUserByEmail(email)
         if (CollectionUtils.isEmpty(savedUser)) {
             LOGGER.error("User with such e-mail not exist")
@@ -141,23 +141,23 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         }
     }
 
-    private fun getUserForUpdate(savedUserDto: UserDto, requestUserDto:UserDto){
-        if (!StringUtils.isEmpty(requestUserDto.nickName)){
+    private fun getUserForUpdate(savedUserDto: UserDto, requestUserDto: UserDto) {
+        if (!StringUtils.isEmpty(requestUserDto.nickName)) {
             savedUserDto.nickName = requestUserDto.nickName
         }
-        if (!StringUtils.isEmpty(requestUserDto.name)){
+        if (!StringUtils.isEmpty(requestUserDto.name)) {
             savedUserDto.name = requestUserDto.name
         }
-        if (!StringUtils.isEmpty(requestUserDto.surName)){
+        if (!StringUtils.isEmpty(requestUserDto.surName)) {
             savedUserDto.surName = requestUserDto.surName
         }
-        if (!StringUtils.isEmpty(requestUserDto.patronymic)){
+        if (!StringUtils.isEmpty(requestUserDto.patronymic)) {
             savedUserDto.patronymic = requestUserDto.patronymic
         }
-        if (!StringUtils.isEmpty(requestUserDto.sex)){
+        if (!StringUtils.isEmpty(requestUserDto.sex)) {
             savedUserDto.sex = requestUserDto.sex
         }
-        if (!StringUtils.isEmpty(requestUserDto.birthDay)){
+        if (!StringUtils.isEmpty(requestUserDto.birthDay)) {
             savedUserDto.birthDay = requestUserDto.birthDay
         }
     }
