@@ -5,5 +5,5 @@ import org.springframework.security.core.Authentication
 
 interface IIncomingService {
 
-    fun createIncoming(authentication: Authentication?,incomingDto: IncomingDto): IncomingDto
+    fun createIncoming(authentication: Authentication?,resource:MutableMap<String, Array<Long>>): List<IncomingDto>
 }

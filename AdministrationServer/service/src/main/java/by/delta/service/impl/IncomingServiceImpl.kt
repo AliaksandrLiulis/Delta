@@ -24,15 +24,24 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
 ) : IIncomingService {
 
     @Transactional
-    override fun createIncoming(authentication: Authentication?, incomingDto: IncomingDto): IncomingDto {
+    override fun createIncoming(authentication: Authentication?, resource: MutableMap<String, Array<Long>>): List<IncomingDto> {
+        var list = ArrayList<IncomingDto>()
         authenticationValidator.validate(authentication)
         userService.checkAndGetUserByEmail(authentication!!.name)
-        val existUser = userService.getUserById(incomingDto.faceDto.id)
-        val existMessage = messageService.checkAndgetMessageById(incomingDto.messageDto.id)
-        val faceExistUser = faceService.getFaceByUserId(existUser.id)
-        incomingDto.messageState = 0
-        incomingDto.messageDto = existMessage
-        incomingDto.faceDto = faceExistUser
-        return incomingConverter.modelToDto(incomingRepository.save(incomingConverter.dtoToModel(incomingDto)))
+        val recipients = resource["face_id"]
+        val message = resource["message_id"]
+        val existMessage = messageService.checkAndgetMessageById(message!![0])
+        val iter = recipients!!.iterator()
+        for (i in iter){
+            var incomingDto = IncomingDto()
+            val existUser = userService.getUserById(i)
+            val faceExistUser = faceService.getFaceByUserId(existUser.id)
+            incomingDto.messageState = 0
+            incomingDto.messageDto = existMessage
+            incomingDto.faceDto = faceExistUser
+            var savedIncommingDto = incomingConverter.modelToDto(incomingRepository.save(incomingConverter.dtoToModel(incomingDto)))
+            list.add(savedIncommingDto)
+        }
+        return list
     }
 }
