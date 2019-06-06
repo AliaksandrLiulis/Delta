@@ -14,7 +14,7 @@ class IncomingController @Autowired constructor(private val incomingService: IIn
 
     @PostMapping(consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)
-    fun createIncoming(authentication: Authentication?, @RequestBody resource:MutableMap<String, Array<Long>>): List<IncomingDto> {
+    fun createIncoming(authentication: Authentication?, @RequestBody resource:MutableMap<String, Any>): List<IncomingDto> {
        return incomingService.createIncoming(authentication, resource)
     }
 }
