@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(value = "/organizations", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
-class OrganizationController @Autowired constructor(private val organizationService: IOrganizationService){
+open class OrganizationController @Autowired constructor(private val organizationService: IOrganizationService){
 
     @PostMapping(consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)

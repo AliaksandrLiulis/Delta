@@ -67,7 +67,7 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
 
     override fun getMessageById(authentication: Authentication?, id: Long): Set<MessageDto> {
         authenticationValidator.validate(authentication)
-        messageValidator.checkId(id)
+        messageValidator.checkId(id.toString())
         //Get user by authentication
         val faceDto = faceService.getFaceByUserEmail(authentication!!.name)
         //Create new params with message Id
@@ -86,7 +86,7 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
     }
 
     override fun checkAndgetMessageById(id: Long): MessageDto {
-        messageValidator.checkId(id)
+        messageValidator.checkId(id.toString())
         val messages = messageRepository.query(GetMessageById(Helper.getWraperId(id)), 1, 0)
         if (CollectionUtils.isEmpty(messages)) {
             LOGGER.error("Messages with such id not exist")

@@ -52,11 +52,13 @@ public class UserValidator {
         }
     }
 
-    public void checkId(final Long id) {
-        CommonValidator.checkIdNullParams(id, "User id is null", ServiceErrorCode.ID_USER_IS_NULL, ConstParamService.USER_ID_STRING);
-        CommonValidator.checkIdLengthParams(id, 10, "User Id is long so much", ServiceErrorCode.ID_USER_IS_LONG_SO_MUCH, ConstParamService.USER_ID_STRING);
-        CommonValidator.checkIdLessParams(id, 0, "User id is less than 0", ServiceErrorCode.ID_USER_IS_LESS_THAN_0, ConstParamService.USER_ID_STRING);
-        CommonValidator.checkIdEqualsParams(id, 0, "User id equals 0", ServiceErrorCode.ID_USER_IS_EQUALS_0, ConstParamService.USER_ID_STRING);
+    public void checkId(final String id) {
+        CommonValidator.checkNumberParams(id, "User id  is not number", ServiceErrorCode.ID_USER_NOT_NUMBER, ConstParamService.USER_ID_STRING);
+        Long longId = Long.parseLong(id);
+        CommonValidator.checkIdNullParams(longId, "User id is null", ServiceErrorCode.ID_USER_IS_NULL, ConstParamService.USER_ID_STRING);
+        CommonValidator.checkIdLengthParams(longId, 10, "User Id is long so much", ServiceErrorCode.ID_USER_IS_LONG_SO_MUCH, ConstParamService.USER_ID_STRING);
+        CommonValidator.checkIdLessParams(longId, 0, "User id is less than 0", ServiceErrorCode.ID_USER_IS_LESS_THAN_0, ConstParamService.USER_ID_STRING);
+        CommonValidator.checkIdEqualsParams(longId, 0, "User id equals 0", ServiceErrorCode.ID_USER_IS_EQUALS_0, ConstParamService.USER_ID_STRING);
     }
 
     private void validateNickName(final UserDto userDto) {

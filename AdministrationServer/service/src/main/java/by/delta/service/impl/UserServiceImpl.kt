@@ -4,7 +4,6 @@ import by.delta.converter.IConverter
 import by.delta.dto.FaceDto
 import by.delta.dto.UserDto
 import by.delta.exception.ModelSameServiceException
-import by.delta.exception.ValidationException
 import by.delta.exception.errorCode.ServiceErrorCode
 import by.delta.model.User
 import by.delta.repository.IRepository
@@ -33,8 +32,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
 import org.springframework.util.StringUtils
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 
 @Service(value = "userService")
 open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEncoder: BCryptPasswordEncoder,
@@ -48,12 +45,7 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
 ) : UserDetailsService, IUserService {
 
     override fun loadUserByUsername(str: String): UserDetails {
-        val users: List<User>
-        if (str.contains(ConstParamService.CHAR_EMAIL_STRING)) {
-            users = getUserByEmail(str)
-        } else {
-            users = getUserByName(str)
-        }
+        val users: List<User> = getListUserByUniqueParams(str)
         if (CollectionUtils.isEmpty(users)) {
             throw UsernameNotFoundException("Invalid email or password.")
         }
@@ -170,6 +162,14 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         if (!StringUtils.isEmpty(requestUserDto.birthDay)) {
             savedUserDto.birthDay = requestUserDto.birthDay
         }
+    }
+
+    private fun getListUserByUniqueParams(str: String):List<User>{
+        when(str.contains(ConstParamService.CHAR_EMAIL_STRING)){
+            true -> return  getUserByEmail(str)
+            false -> getUserByName(str)
+        }
+        return  getUserByEmail(str)
     }
 
     companion object {

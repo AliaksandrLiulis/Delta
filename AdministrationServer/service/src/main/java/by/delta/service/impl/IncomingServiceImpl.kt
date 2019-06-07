@@ -12,6 +12,8 @@ import by.delta.service.IUserService
 import by.delta.specification.impl.incoming.GetIncomingMessageById
 import by.delta.util.Helper
 import by.delta.validator.AuthenticationValidator
+import by.delta.validator.MessageValidator
+import by.delta.validator.UserValidator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
@@ -25,7 +27,9 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
                                                       private val authenticationValidator: AuthenticationValidator,
                                                       private val userService: IUserService,
                                                       private val messageService: IMessageService,
-                                                      private val faceService: IFaceService
+                                                      private val faceService: IFaceService,
+                                                      private val messageValidator: MessageValidator,
+                                                      private val userValidator: UserValidator
 
 ) : IIncomingService {
 
@@ -33,11 +37,12 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
     override fun createIncoming(authentication: Authentication?, resource: MutableMap<String, Any>): List<IncomingDto> {
         authenticationValidator.validate(authentication)
         userService.checkAndGetUserByEmail(authentication!!.name)
-        var list = ArrayList<IncomingDto>()
+        val responseList = ArrayList<IncomingDto>()
 
         //Same data removed
-        var recipients = removeSameData(resource["face_id"] as List<Int>)
+        val recipients = removeSameData(checkArrayAndGetList(resource))
         val message = resource["message_id"]
+        messageValidator.checkId(message.toString())
 
         //Get exist message by message Id
         val existMessage = messageService.checkAndgetMessageById(message.toString().toLong())
@@ -47,18 +52,18 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
 
         //add Incoming records if table for message is empty
         if (CollectionUtils.isEmpty(listIncomingMessage)) {
-            addIncoming(list, recipients, existMessage)
-            return list
+            addIncoming(responseList, recipients, existMessage)
+            return responseList
         }
         //Copy of lists for remove and add message
         var listForRemoveMessages: ArrayList<Incoming> = ArrayList(listIncomingMessage)
         var listForAddMessages: ArrayList<Int> = ArrayList(recipients)
-        createRemoveAndAddMessageList(list, listForRemoveMessages, listForAddMessages, listIncomingMessage, recipients)
+        createRemoveAndAddMessageList(responseList, listForRemoveMessages, listForAddMessages, listIncomingMessage, recipients)
         //remove Incoming records
         listForRemoveMessages.forEach(Consumer { t -> incomingRepository.remove(t.id) })
         //add Incoming records
-        addIncoming(list, listForAddMessages, existMessage)
-        return list
+        addIncoming(responseList, listForAddMessages, existMessage)
+        return responseList
     }
 
 
@@ -80,12 +85,20 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         return ArrayList<Int>(set)
     }
 
+    private fun checkArrayAndGetList(resource: MutableMap<String, Any>):List<Int>{
+        val temp: List<Any> = resource["face_id"] as List<Any>
+        temp.forEach { any -> userValidator.checkId(any.toString()) }
+        val list = ArrayList<Int>()
+        temp.forEach { t: Any -> list.add(Integer.parseInt(t.toString())) }
+        return list
+    }
+
     private fun createRemoveAndAddMessageList(resultList: ArrayList<IncomingDto>,
-                                              listForRemoveMessages:ArrayList<Incoming>,
-                                              listForAddMessages:ArrayList<Int>,
-                                              listIncomingMessage:List<Incoming>,
-                                              recipients:List<Int>
-                                              ){
+                                              listForRemoveMessages: ArrayList<Incoming>,
+                                              listForAddMessages: ArrayList<Int>,
+                                              listIncomingMessage: List<Incoming>,
+                                              recipients: List<Int>
+    ) {
         listIncomingMessage.forEach { message ->
             recipients.forEach { recipient ->
                 if (recipient.toLong() == message.face.id) {

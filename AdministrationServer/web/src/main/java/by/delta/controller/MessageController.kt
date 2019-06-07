@@ -6,6 +6,7 @@ import by.delta.service.IMessageService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
@@ -13,9 +14,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(value = "/messages", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
 open class MessageController @Autowired constructor(private val messageService: IMessageService) {
 
+    @PreAuthorize(value = "hasRole('ROLE_USER')")
     @PostMapping(consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)
-    fun createMessage(authentication: Authentication?, @RequestBody resource: MessageDto): MessageDto =
+    open fun createMessage(authentication: Authentication?, @RequestBody resource: MessageDto): MessageDto =
             messageService.createMessage(authentication, resource)
 
     @GetMapping

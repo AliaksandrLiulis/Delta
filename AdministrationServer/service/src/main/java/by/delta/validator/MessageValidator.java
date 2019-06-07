@@ -7,6 +7,7 @@ import by.delta.util.ConstParamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -25,11 +26,13 @@ public class MessageValidator {
         checkMessageBody(messageDto);
     }
 
-    public void checkId(final Long id) {
-        CommonValidator.checkIdNullParams(id, "Message id is null", ServiceErrorCode.ID_MESSAGE_IS_NULL, ConstParamService.MESSAGE_ID_STRING);
-        CommonValidator.checkIdLengthParams(id, 10, "Message Id is long so much", ServiceErrorCode.ID_MESSAGE_IS_LONG_SO_MUCH, ConstParamService.MESSAGE_ID_STRING);
-        CommonValidator.checkIdLessParams(id, 0, "Message id is less than 0", ServiceErrorCode.ID_MESSAGE_IS_LESS_THAN_0, ConstParamService.MESSAGE_ID_STRING);
-        CommonValidator.checkIdEqualsParams(id, 0, "Message id equals 0", ServiceErrorCode.ID_MESSAGE_IS_EQUALS_0, ConstParamService.MESSAGE_ID_STRING);
+    public void checkId(final String id) {
+        CommonValidator.checkNumberParams(id, "Message id is not number", ServiceErrorCode.ID_MESSAGE_NOT_NUMBER, ConstParamService.MESSAGE_ID_STRING);
+        Long longId = Long.parseLong(id);
+        CommonValidator.checkIdNullParams(longId, "Message id is null", ServiceErrorCode.ID_MESSAGE_IS_NULL, ConstParamService.MESSAGE_ID_STRING);
+        CommonValidator.checkIdLengthParams(longId, 10, "Message Id is long so much", ServiceErrorCode.ID_MESSAGE_IS_LONG_SO_MUCH, ConstParamService.MESSAGE_ID_STRING);
+        CommonValidator.checkIdLessParams(longId, 0, "Message id is less than 0", ServiceErrorCode.ID_MESSAGE_IS_LESS_THAN_0, ConstParamService.MESSAGE_ID_STRING);
+        CommonValidator.checkIdEqualsParams(longId, 0, "Message id equals 0", ServiceErrorCode.ID_MESSAGE_IS_EQUALS_0, ConstParamService.MESSAGE_ID_STRING);
     }
 
     private void checkMessageSubject(final MessageDto messageDto) {
@@ -43,6 +46,7 @@ public class MessageValidator {
         CommonValidator.checkEmptyStringParams(messageDto.getMessageBody(), "body of message is Empty", ServiceErrorCode.MESSAGE_BODY_IS_EMPTY, ConstParamService.BODY_STRING);
         CommonValidator.checkLengthStringParams(messageDto.getMessageBody(), "body of message is long so much", 3000, ServiceErrorCode.MESSAGE_SUBJECT_IS_LONG_SO_MUCH, ConstParamService.SUBJECT_STRING);
     }
+
 
 //    private void checkMessageReply(final MessageDto messageDto) {
 //        CommonValidator.checkIdNullParams(messageDto.getReplyMessage(), "reply id message is null", ServiceErrorCode.REPLY_MESSAGE_IS_NULL, ConstParamService.REPLY_STRING);

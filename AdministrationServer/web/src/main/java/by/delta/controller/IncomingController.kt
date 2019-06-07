@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(value = "/messages/recipients", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
-class IncomingController @Autowired constructor(private val incomingService: IIncomingService) {
+open class IncomingController @Autowired constructor(private val incomingService: IIncomingService) {
 
     @PostMapping(consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)

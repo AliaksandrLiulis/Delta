@@ -34,6 +34,7 @@ public enum ServiceErrorCode {
     SEX_USER_IS_NOT_CORRECT(Constants.ERROR_000029),
     EMAIL_USER_NOT_EXISTS(Constants.ERROR_000030),
     ID_USER_NOT_EXISTS(Constants.ERROR_000500),
+    ID_USER_NOT_NUMBER(Constants.ERROR_000501),
 
 
     //message validation(000031-000060)
@@ -50,6 +51,7 @@ public enum ServiceErrorCode {
     ID_MESSAGE_IS_LONG_SO_MUCH(Constants.ERROR_000041),
     ID_MESSAGE_IS_LESS_THAN_0(Constants.ERROR_000042),
     ID_MESSAGE_IS_EQUALS_0(Constants.ERROR_000043),
+    ID_MESSAGE_NOT_NUMBER(Constants.ERROR_000044),
 
 
     //face validator(000061-000090)
@@ -184,6 +186,7 @@ public enum ServiceErrorCode {
         private static final String ERROR_000261 = "000261";
 
         private static final String ERROR_000500 = "000500";
+        private static final String ERROR_000501 = "000501";
 
         private Constants() {
         }
