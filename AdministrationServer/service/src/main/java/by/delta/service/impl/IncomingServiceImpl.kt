@@ -85,7 +85,7 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         return ArrayList<Int>(set)
     }
 
-    private fun checkArrayAndGetList(resource: MutableMap<String, Any>):List<Int>{
+    private fun checkArrayAndGetList(resource: MutableMap<String, Any>): List<Int> {
         val temp: List<Any> = resource["face_id"] as List<Any>
         temp.forEach { any -> userValidator.checkId(any.toString()) }
         val list = ArrayList<Int>()
