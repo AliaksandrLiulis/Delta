@@ -85,7 +85,7 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
         return messageConverter.modelToDtoList(messages)
     }
 
-    override fun checkAndgetMessageById(id: Long): MessageDto {
+    override fun checkAndGetMessageById(id: Long): MessageDto {
         messageValidator.checkId(id.toString())
         val messages = messageRepository.query(GetMessageById(Helper.getWraperId(id)), 1, 0)
         if (CollectionUtils.isEmpty(messages)) {
@@ -93,6 +93,26 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
             throw MessageError(ServiceErrorCode.MESSAGE_ID_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)
         }
         return messageConverter.modelToDto(messages[0])
+    }
+
+    @Transactional
+    override fun updateMessage(authentication: Authentication?, id: Long, messageDto: MessageDto): MessageDto {
+        authenticationValidator.validate(authentication)
+        messageValidator.checkId(id.toString())
+        val faceDto = faceService.getFaceByUserEmail(authentication!!.name)
+        var newParams: MutableMap<String, List<String>> = Helper.getWraperId(id)
+        val list = listOf(faceDto.id.toString())
+        newParams[ConstParamService.FACE_ID] = list
+        val messages = messageRepository.query(GetUserMessageByMessageId(newParams), 1, 0).toSet()
+        if (CollectionUtils.isEmpty(messages)) {
+            LOGGER.error("Messages for this user not exist")
+            throw MessageError(ServiceErrorCode.MESSAGE_ID_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)
+        }
+        messageValidator.validate(messageDto)
+        var existMessage = messages.elementAt(0)
+        existMessage.messageSubject = messageDto.messageSubject
+        existMessage.messageBody = messageDto.messageBody
+        return messageConverter.modelToDto(messageRepository.update(existMessage))
     }
 
     companion object {

@@ -2,7 +2,7 @@ package by.delta.service
 
 import by.delta.dto.FaceDto
 
-open interface IFaceService {
+interface IFaceService {
 
     fun createFace(faceDto: FaceDto): FaceDto
     fun getFaceById(recipientId: Long): FaceDto

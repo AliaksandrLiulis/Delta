@@ -45,7 +45,7 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         messageValidator.checkId(message.toString())
 
         //Get exist message by message Id
-        val existMessage = messageService.checkAndgetMessageById(message.toString().toLong())
+        val existMessage = messageService.checkAndGetMessageById(message.toString().toLong())
 
         //Get exist incoming message by message Id
         val listIncomingMessage = incomingRepository.query(GetIncomingMessageById(Helper.getWraperId(existMessage.id)), 100, 0)

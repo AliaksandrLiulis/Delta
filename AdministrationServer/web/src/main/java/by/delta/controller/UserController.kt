@@ -24,13 +24,13 @@ open class UserController @Autowired constructor(private val userService: IUserS
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    open fun getAllUsers(@RequestParam allRequestParams: MutableMap <String, String>): Map<String, Any> {
+    open fun getAllUsers(@RequestParam allRequestParams: MutableMap<String, String>): Map<String, Any> {
         return userService.getAllUsers(allRequestParams)
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    open fun updateUsers(authentication: Authentication, @RequestBody resource: UserDto): UserDto{
+    open fun updateUsers(authentication: Authentication, @RequestBody resource: UserDto): UserDto {
         return userService.updateUser(authentication, resource)
     }
 }
