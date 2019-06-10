@@ -11,7 +11,8 @@ import by.delta.service.IFaceService
 import by.delta.service.IIncomingService
 import by.delta.service.IMessageService
 import by.delta.service.IUserService
-import by.delta.specification.impl.incoming.GetIncomingMessageById
+import by.delta.specification.impl.incoming.GetIncomingByIdMessage
+import by.delta.specification.impl.incoming.GetIncomingByIdFace
 import by.delta.util.Helper
 import by.delta.validator.AuthenticationValidator
 import by.delta.validator.MessageValidator
@@ -39,7 +40,12 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
     private lateinit var messageService: IMessageService
 
     override fun getUserIncoming(authentication: Authentication?, allRequestParams: MutableMap<String, String>): Map<String, Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        authenticationValidator.validate(authentication)
+        var user = userService.checkAndGetUserByEmail(authentication!!.name)
+        val faceDto = faceService.getFaceByUserEmail(authentication!!.name)
+
+        print(incomingRepository.query(GetIncomingByIdFace(Helper.getWraperId(faceDto.id)),1000,0))
+        return HashMap<String, Any>()
     }
 
     @Transactional
@@ -61,7 +67,7 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         }
 
         //Get exist incoming message by message Id
-        val listIncomingMessage = incomingRepository.query(GetIncomingMessageById(Helper.getWraperId(existMessage.id)), 1000, 0)
+        val listIncomingMessage = incomingRepository.query(GetIncomingByIdMessage(Helper.getWraperId(existMessage.id)), 1000, 0)
 
         //add Incoming records if table for message is empty
         if (CollectionUtils.isEmpty(listIncomingMessage)) {
@@ -84,7 +90,7 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
     }
 
     override fun getIncomingByMessageId(messageId: Long): List<Incoming> {
-        return incomingRepository.query(GetIncomingMessageById(Helper.getWraperId(messageId)), 100, 0)
+        return incomingRepository.query(GetIncomingByIdMessage(Helper.getWraperId(messageId)), 100, 0)
     }
 
     override fun updateIncoming(incoming: Incoming): Incoming {

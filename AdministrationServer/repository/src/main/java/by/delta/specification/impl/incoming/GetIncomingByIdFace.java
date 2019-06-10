@@ -1,6 +1,5 @@
 package by.delta.specification.impl.incoming;
 
-import by.delta.model.Face;
 import by.delta.model.Incoming;
 import by.delta.specification.RepositoryConstParams;
 import by.delta.specification.abstractspecification.AbstractCriteriaQuerySpecification;
@@ -14,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GetIncomingMessageById extends AbstractCriteriaQuerySpecification<Incoming> {
+public class GetIncomingByIdFace extends AbstractCriteriaQuerySpecification<Incoming> {
 
-    public GetIncomingMessageById(Map<String, List<String>> params) {
+    public GetIncomingByIdFace(Map<String, List<String>> params) {
         super(params);
     }
 
@@ -27,7 +26,7 @@ public class GetIncomingMessageById extends AbstractCriteriaQuerySpecification<I
             params.forEach((k, v) -> {
                 if (k.equalsIgnoreCase(RepositoryConstParams.ID_KEY)) {
                     v.forEach(s -> {
-                        conditionList.add(criteriaBuilder.equal(root.join("message").get(k), s));
+                        conditionList.add(criteriaBuilder.equal(root.join("face").get(k), s));
                     });
                 }
             });
