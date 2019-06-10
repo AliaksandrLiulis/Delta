@@ -13,6 +13,7 @@ import by.delta.service.IMessageService
 import by.delta.service.IUserService
 import by.delta.specification.impl.incoming.GetIncomingByIdMessage
 import by.delta.specification.impl.incoming.GetIncomingByIdFace
+import by.delta.util.ConstParamService
 import by.delta.util.Helper
 import by.delta.validator.AuthenticationValidator
 import by.delta.validator.MessageValidator
@@ -41,11 +42,11 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
 
     override fun getUserIncoming(authentication: Authentication?, allRequestParams: MutableMap<String, String>): Map<String, Any> {
         authenticationValidator.validate(authentication)
-        var user = userService.checkAndGetUserByEmail(authentication!!.name)
         val faceDto = faceService.getFaceByUserEmail(authentication!!.name)
-
-        print(incomingRepository.query(GetIncomingByIdFace(Helper.getWraperId(faceDto.id)),1000,0))
-        return HashMap<String, Any>()
+        val x = incomingRepository.query(GetIncomingByIdFace(Helper.getWraperId(faceDto.id)),100,0).toSet()
+        var mapParams = LinkedHashMap<String, Any>()
+        mapParams[ConstParamService.RECORDS_STRING] = incomingConverter.modelToDtoList(x)
+        return mapParams
     }
 
     @Transactional

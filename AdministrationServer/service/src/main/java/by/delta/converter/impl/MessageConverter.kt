@@ -1,7 +1,9 @@
 package by.delta.converter.impl
 
 import by.delta.converter.IConverter
+import by.delta.dto.IncomingDto
 import by.delta.dto.MessageDto
+import by.delta.model.Incoming
 import by.delta.model.Message
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,4 +42,15 @@ class MessageConverter @Autowired constructor(private val modelMapper: ModelMapp
         }
         return listMessageDto
     }
+
+
+//    fun modelToDtoListMap(listModel: LinkedHashMap<String, LinkedHashMap<Message, LinkedHashMap<String, Set<Incoming>>>>): LinkedHashMap<String, LinkedHashMap<MessageDto, LinkedHashMap<String, List<IncomingDto>>>> {
+//        val response = LinkedHashMap<String, LinkedHashMap<Message, LinkedHashMap<String, Set<Incoming>>>>()
+//            val maps = listModel["messages"]
+//        for (m in maps!!.iterator()){
+//            val inc =
+//        }
+//
+//        return answer
+//    }
 }
