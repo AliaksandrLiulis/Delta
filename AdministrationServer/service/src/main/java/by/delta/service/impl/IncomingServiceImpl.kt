@@ -3,6 +3,8 @@ package by.delta.service.impl
 import by.delta.converter.impl.IncomingConverter
 import by.delta.dto.IncomingDto
 import by.delta.dto.MessageDto
+import by.delta.exception.MessageError
+import by.delta.exception.errorCode.ServiceErrorCode
 import by.delta.model.Incoming
 import by.delta.repository.IRepository
 import by.delta.service.IFaceService
@@ -14,6 +16,7 @@ import by.delta.util.Helper
 import by.delta.validator.AuthenticationValidator
 import by.delta.validator.MessageValidator
 import by.delta.validator.UserValidator
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
@@ -33,7 +36,7 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
 ) : IIncomingService {
 
     @Autowired
-    private lateinit var messageService:IMessageService
+    private lateinit var messageService: IMessageService
 
     override fun getUserIncoming(authentication: Authentication?, allRequestParams: MutableMap<String, String>): Map<String, Any> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -52,9 +55,13 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
 
         //Get exist message by message Id
         val existMessage = messageService.checkAndGetMessageById(message.toString().toLong())
+        if (existMessage.sendDate != null) {
+            LOGGER.error("Message has already been sent")
+            throw MessageError(ServiceErrorCode.MESSAGE_WAS_SEND, "")
+        }
 
         //Get exist incoming message by message Id
-        val listIncomingMessage = incomingRepository.query(GetIncomingMessageById(Helper.getWraperId(existMessage.id)), 100, 0)
+        val listIncomingMessage = incomingRepository.query(GetIncomingMessageById(Helper.getWraperId(existMessage.id)), 1000, 0)
 
         //add Incoming records if table for message is empty
         if (CollectionUtils.isEmpty(listIncomingMessage)) {
@@ -66,7 +73,11 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         var listForAddMessages: ArrayList<Int> = ArrayList(recipients)
         createRemoveAndAddMessageList(responseList, listForRemoveMessages, listForAddMessages, listIncomingMessage, recipients)
         //remove Incoming records
-        listForRemoveMessages.forEach(Consumer { t -> incomingRepository.remove(t.id) })
+        listForRemoveMessages.forEach(Consumer { t ->
+            if (t.messageState == 0) {
+                incomingRepository.remove(t.id)
+            }
+        })
         //add Incoming records
         addIncoming(responseList, listForAddMessages, existMessage)
         return responseList
@@ -121,5 +132,9 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
                 }
             }
         }
+    }
+
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(IncomingServiceImpl::class.java)
     }
 }

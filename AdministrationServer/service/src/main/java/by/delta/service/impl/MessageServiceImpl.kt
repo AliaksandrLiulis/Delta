@@ -38,7 +38,7 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
 ) : IMessageService {
 
     @Autowired
-    private lateinit var incomingService:IIncomingService
+    private lateinit var incomingService: IIncomingService
 
     @Transactional
     override fun createMessage(authentication: Authentication?, messageDto: MessageDto): MessageDto {
@@ -104,6 +104,10 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
     override fun updateMessage(authentication: Authentication?, id: Long, messageDto: MessageDto): MessageDto {
         val messages = getModelExistMessage(authentication, id)
         var existMessage = messages.elementAt(0)
+        if (existMessage.sendDate != null){
+            LOGGER.error("Message has already been sent and can't be changing")
+            throw MessageError(ServiceErrorCode.MESSAGE_WAS_SEND_AND_CAN_NOT_BE_CHANGED, "")
+        }
         if (!StringUtils.isEmpty(messageDto.messageSubject)) {
             messageValidator.checkMessageSubject(messageDto)
             existMessage.messageSubject = messageDto.messageSubject
@@ -128,9 +132,10 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
         }
         existMessage.sendDate = LocalDateTime.now()
         messageRepository.update(existMessage)
-        var changedInc = incomingMessage[0]
-        changedInc.messageState = 1
-        incomingService.updateIncoming(changedInc)
+        for (inc in incomingMessage) {
+            inc.messageState = 1
+            incomingService.updateIncoming(inc)
+        }
     }
 
     private fun getModelExistMessage(authentication: Authentication?, id: Long): Set<Message> {
