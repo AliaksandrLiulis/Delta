@@ -39,4 +39,12 @@ open class MessageController @Autowired constructor(private val messageService: 
     @ResponseStatus(HttpStatus.OK)
     open fun updateMessage(authentication: Authentication?, @PathVariable("id") id: Long, @RequestBody resource: MessageDto): MessageDto =
             messageService.updateMessage(authentication, id, resource)
+
+    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PostMapping(value = "/send/{id}", consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE))
+    @ResponseStatus(HttpStatus.OK)
+    open fun sendMessage(authentication: Authentication?, @PathVariable("id")id: Long) {
+      messageService.sendMessage(authentication, id)
+    }
+
 }

@@ -26,12 +26,18 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
                                                       private val incomingConverter: IncomingConverter,
                                                       private val authenticationValidator: AuthenticationValidator,
                                                       private val userService: IUserService,
-                                                      private val messageService: IMessageService,
                                                       private val faceService: IFaceService,
                                                       private val messageValidator: MessageValidator,
                                                       private val userValidator: UserValidator
 
 ) : IIncomingService {
+
+    @Autowired
+    private lateinit var messageService:IMessageService
+
+    override fun getUserIncoming(authentication: Authentication?, allRequestParams: MutableMap<String, String>): Map<String, Any> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     @Transactional
     override fun createIncoming(authentication: Authentication?, resource: MutableMap<String, Any>): List<IncomingDto> {
@@ -66,6 +72,13 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         return responseList
     }
 
+    override fun getIncomingByMessageId(messageId: Long): List<Incoming> {
+        return incomingRepository.query(GetIncomingMessageById(Helper.getWraperId(messageId)), 100, 0)
+    }
+
+    override fun updateIncoming(incoming: Incoming): Incoming {
+        return incomingRepository.update(incoming)
+    }
 
     private fun addIncoming(resultList: ArrayList<IncomingDto>, listForAddMessages: List<Int>, existMessage: MessageDto) {
         listForAddMessages.forEach(Consumer { t ->

@@ -13,10 +13,17 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(value = "/messages/recipients", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
 open class IncomingController @Autowired constructor(private val incomingService: IIncomingService) {
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+
     @PostMapping(consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.CREATED)
     fun createIncoming(authentication: Authentication?, @RequestBody resource:MutableMap<String, Any>): List<IncomingDto> {
        return incomingService.createIncoming(authentication, resource)
+    }
+
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserIncoming(authentication: Authentication?, @RequestParam allRequestParams: MutableMap <String, String>): Map<String, Any> {
+        return incomingService.getUserIncoming(authentication, allRequestParams)
     }
 }

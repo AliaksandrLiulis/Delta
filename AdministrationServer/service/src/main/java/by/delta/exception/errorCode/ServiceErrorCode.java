@@ -52,6 +52,8 @@ public enum ServiceErrorCode {
     ID_MESSAGE_IS_LESS_THAN_0(Constants.ERROR_000042),
     ID_MESSAGE_IS_EQUALS_0(Constants.ERROR_000043),
     ID_MESSAGE_NOT_NUMBER(Constants.ERROR_000044),
+    MESSAGE_WAS_SEND(Constants.ERROR_000045),
+    RECIPIENT_FOR_MESSAGE_NOT_EXIST(Constants.ERROR_000046),
 
 
     //face validator(000061-000090)
@@ -152,6 +154,8 @@ public enum ServiceErrorCode {
         private static final String ERROR_000042 = "000042";
         private static final String ERROR_000043 = "000043";
         private static final String ERROR_000044 = "000044";
+        private static final String ERROR_000045 = "000045";
+        private static final String ERROR_000046 = "000046";
 
         private static final String ERROR_000061 = "000061";
         private static final String ERROR_000062 = "000062";

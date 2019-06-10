@@ -7,6 +7,7 @@ import by.delta.exception.errorCode.ServiceErrorCode
 import by.delta.model.Message
 import by.delta.repository.IRepository
 import by.delta.service.IFaceService
+import by.delta.service.IIncomingService
 import by.delta.service.IMessageService
 import by.delta.specification.impl.message.GetMessageById
 import by.delta.specification.impl.message.GetUserMessageByMessageId
@@ -23,9 +24,8 @@ import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
-import java.time.LocalDate
+import org.springframework.util.StringUtils
 import java.time.LocalDateTime
-
 
 @Service
 open class MessageServiceImpl @Autowired constructor(private val messageConverter: MessageConverter,
@@ -34,7 +34,11 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
                                                      private val faceService: IFaceService,
                                                      private val messageParametersValidator: MessageParametersValidator,
                                                      private val authenticationValidator: AuthenticationValidator
+
 ) : IMessageService {
+
+    @Autowired
+    private lateinit var incomingService:IIncomingService
 
     @Transactional
     override fun createMessage(authentication: Authentication?, messageDto: MessageDto): MessageDto {
@@ -98,6 +102,38 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
 
     @Transactional
     override fun updateMessage(authentication: Authentication?, id: Long, messageDto: MessageDto): MessageDto {
+        val messages = getModelExistMessage(authentication, id)
+        var existMessage = messages.elementAt(0)
+        if (!StringUtils.isEmpty(messageDto.messageSubject)) {
+            messageValidator.checkMessageSubject(messageDto)
+            existMessage.messageSubject = messageDto.messageSubject
+        }
+        if (!StringUtils.isEmpty(messageDto.messageBody)) {
+            existMessage.messageBody = messageDto.messageBody
+        }
+        return messageConverter.modelToDto(messageRepository.update(existMessage))
+    }
+
+    @Transactional
+    override fun sendMessage(authentication: Authentication?, idMessage: Long) {
+        val existMessage = getModelExistMessage(authentication, idMessage).elementAt(0)
+        var incomingMessage = incomingService.getIncomingByMessageId(existMessage.id)
+        if (CollectionUtils.isEmpty(incomingMessage)) {
+            LOGGER.error("Can't send message. Recipient not exist")
+            throw MessageError(ServiceErrorCode.RECIPIENT_FOR_MESSAGE_NOT_EXIST, "")
+        }
+        if (existMessage.sendDate != null) {
+            LOGGER.error("Message has already been sent")
+            throw MessageError(ServiceErrorCode.MESSAGE_WAS_SEND, "")
+        }
+        existMessage.sendDate = LocalDateTime.now()
+        messageRepository.update(existMessage)
+        var changedInc = incomingMessage[0]
+        changedInc.messageState = 1
+        incomingService.updateIncoming(changedInc)
+    }
+
+    private fun getModelExistMessage(authentication: Authentication?, id: Long): Set<Message> {
         authenticationValidator.validate(authentication)
         messageValidator.checkId(id.toString())
         val faceDto = faceService.getFaceByUserEmail(authentication!!.name)
@@ -109,11 +145,7 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
             LOGGER.error("Messages for this user not exist")
             throw MessageError(ServiceErrorCode.MESSAGE_ID_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)
         }
-        messageValidator.validate(messageDto)
-        var existMessage = messages.elementAt(0)
-        existMessage.messageSubject = messageDto.messageSubject
-        existMessage.messageBody = messageDto.messageBody
-        return messageConverter.modelToDto(messageRepository.update(existMessage))
+        return messages
     }
 
     companion object {

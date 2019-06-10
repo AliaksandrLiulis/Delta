@@ -2,6 +2,7 @@ package by.delta.service
 
 import by.delta.dto.MessageDto
 import org.springframework.security.core.Authentication
+import sun.plugin2.message.RemoteCAContextIdMessage
 
 interface IMessageService {
 
@@ -10,4 +11,5 @@ interface IMessageService {
     fun getMessageById(authentication: Authentication?, id:Long): Set<MessageDto>
     fun checkAndGetMessageById(id:Long): MessageDto
     fun updateMessage(authentication: Authentication?, id:Long, messageDto: MessageDto): MessageDto
+    fun sendMessage(authentication: Authentication?, idMessage: Long)
 }
