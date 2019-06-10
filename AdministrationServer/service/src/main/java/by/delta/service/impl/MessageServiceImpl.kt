@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 @Service
@@ -39,7 +40,7 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
     override fun createMessage(authentication: Authentication?, messageDto: MessageDto): MessageDto {
         authenticationValidator.validate(authentication)
         messageValidator.validate(messageDto)
-        messageDto.createDate = LocalDate.now()
+        messageDto.createDate = LocalDateTime.now()
         messageDto.faceDto = faceService.getFaceByUserEmail(authentication!!.name)
         return messageConverter.modelToDto(messageRepository.save(messageConverter.dtoToModel(messageDto)))
     }

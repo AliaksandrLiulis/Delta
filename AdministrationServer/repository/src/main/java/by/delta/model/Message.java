@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
@@ -18,9 +19,9 @@ public class Message extends AbstractModel {
     @Column(name = "reply_message")
     private Long replyMessage;
     @Column(name = "create_date")
-    private LocalDate createDate;
+    private LocalDateTime createDate;
     @Column(name = "send_date")
-    private LocalDate sendDate;
+    private LocalDateTime sendDate;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "face_id")
     private Face face;
@@ -49,19 +50,19 @@ public class Message extends AbstractModel {
         this.replyMessage = replyMessage;
     }
 
-    public LocalDate getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDate createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public LocalDate getSendDate() {
+    public LocalDateTime getSendDate() {
         return sendDate;
     }
 
-    public void setSendDate(LocalDate sendDate) {
+    public void setSendDate(LocalDateTime sendDate) {
         this.sendDate = sendDate;
     }
 

@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageDto extends AbstractDto {
 
-    private static final String CREATE_DATE_FORMAT = "yyyy-MM-dd";
-    private static final String SEND_DATE_FORMAT = "yyyy-MM-dd";
+    private static final String CREATE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String SEND_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private String messageSubject;
 
@@ -18,10 +20,10 @@ public class MessageDto extends AbstractDto {
     private Long replyMessage;
 
     @JsonFormat(pattern = CREATE_DATE_FORMAT)
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
     @JsonFormat(pattern = SEND_DATE_FORMAT)
-    private LocalDate sendDate;
+    private LocalDateTime sendDate;
 
     private FaceDto faceDto;
 
@@ -49,19 +51,19 @@ public class MessageDto extends AbstractDto {
         this.replyMessage = replyMessage;
     }
 
-    public LocalDate getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDate createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public LocalDate getSendDate() {
+    public LocalDateTime getSendDate() {
         return sendDate;
     }
 
-    public void setSendDate(LocalDate sendDate) {
+    public void setSendDate(LocalDateTime sendDate) {
         this.sendDate = sendDate;
     }
 
