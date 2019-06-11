@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageDto extends AbstractDto {
@@ -26,6 +28,16 @@ public class MessageDto extends AbstractDto {
     private LocalDateTime sendDate;
 
     private FaceDto faceDto;
+
+    private Set<String> recipientName;
+
+    public Set<String> getRecipientName() {
+        return recipientName;
+    }
+
+    public void setRecipientName(Set<String> recipientName) {
+        this.recipientName = recipientName;
+    }
 
     public String getMessageSubject() {
         return messageSubject;
@@ -84,6 +96,7 @@ public class MessageDto extends AbstractDto {
                 ", createDate=" + createDate +
                 ", sendDate=" + sendDate +
                 ", faceDto=" + faceDto +
+                ", recipientName=" + recipientName +
                 '}';
     }
 }

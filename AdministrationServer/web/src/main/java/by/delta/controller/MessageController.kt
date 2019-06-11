@@ -23,14 +23,14 @@ open class MessageController @Autowired constructor(private val messageService: 
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun getUserMessages(authentication: Authentication?, @RequestParam allRequestParams: MutableMap<String, String>): Map<String, Any> {
+    open fun getUserMessages(authentication: Authentication?, @RequestParam allRequestParams: MutableMap<String, String>): Map<String, Any> {
         return messageService.getUserMessages(authentication, allRequestParams)
     }
 
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getMessageById(authentication: Authentication?, @PathVariable("id") id: Long): Set<MessageDto> {
+    open fun getMessageById(authentication: Authentication?, @PathVariable("id") id: Long): Set<MessageDto> {
         return messageService.getMessageById(authentication, id)
     }
 
