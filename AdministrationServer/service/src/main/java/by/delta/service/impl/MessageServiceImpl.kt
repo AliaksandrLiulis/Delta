@@ -1,6 +1,9 @@
 package by.delta.service.impl
 
+import by.delta.converter.impl.FaceConverter
+import by.delta.converter.impl.IncomingConverter
 import by.delta.converter.impl.MessageConverter
+import by.delta.dto.IncomingDto
 import by.delta.dto.MessageDto
 import by.delta.exception.MessageError
 import by.delta.exception.errorCode.ServiceErrorCode
@@ -39,6 +42,8 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
 
     @Autowired
     private lateinit var incomingService: IIncomingService
+    @Autowired
+    private lateinit var incomingConverter: IncomingConverter
 
     @Transactional
     override fun createMessage(authentication: Authentication?, messageDto: MessageDto): MessageDto {
@@ -63,12 +68,25 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
         //Get records
         val messages = messageRepository.query(GetUserMessagesByFaceId(newParams),
                 allRequestParams.getValue(ConstParamService.LIMIT).toInt(), allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet()
-        //add count and records to response
+        var messDto = messageConverter.modelToDtoList(messages)
+        for (mess in messDto) {
+            val setInc = incomingService.getIncomingByMessageId(mess.id)
+            var setName = LinkedHashSet<String>()
+
+            for (s in setInc) {
+                val face = faceService.getFaceById(s.face.id)
+                print(face.faceName)
+                setName.add(face.faceName.toString())
+
+            }
+            mess.recipientName = setName
+        }
         var mapParams = LinkedHashMap<String, Any>()
         mapParams[ConstParamService.COUNT_STRING] = countOfMessages.toString()
-        mapParams[ConstParamService.RECORDS_STRING] = messageConverter.modelToDtoList(messages)
+        mapParams[ConstParamService.RECORDS_STRING] = messDto
         return mapParams
     }
+
 
     override fun getMessageById(authentication: Authentication?, id: Long): Set<MessageDto> {
         authenticationValidator.validate(authentication)
@@ -104,7 +122,7 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
     override fun updateMessage(authentication: Authentication?, id: Long, messageDto: MessageDto): MessageDto {
         val messages = getModelExistMessage(authentication, id)
         var existMessage = messages.elementAt(0)
-        if (existMessage.sendDate != null){
+        if (existMessage.sendDate != null) {
             LOGGER.error("Message has already been sent and can't be changing")
             throw MessageError(ServiceErrorCode.MESSAGE_WAS_SEND_AND_CAN_NOT_BE_CHANGED, "")
         }
