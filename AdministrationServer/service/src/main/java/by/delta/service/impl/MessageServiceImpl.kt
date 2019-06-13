@@ -3,6 +3,7 @@ package by.delta.service.impl
 import by.delta.converter.impl.FaceConverter
 import by.delta.converter.impl.IncomingConverter
 import by.delta.converter.impl.MessageConverter
+import by.delta.dto.FaceDto
 import by.delta.dto.IncomingDto
 import by.delta.dto.MessageDto
 import by.delta.exception.MessageError
@@ -69,26 +70,29 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
         val messages = messageRepository.query(GetUserMessagesByFaceId(newParams),
                 allRequestParams.getValue(ConstParamService.LIMIT).toInt(), allRequestParams.getValue(ConstParamService.OFFSET).toInt()).toSet()
         var messDto = messageConverter.modelToDtoList(messages)
-        for (mess in messDto) {
-            val setInc = incomingService.getIncomingByMessageId(mess.id)
-            var setName = LinkedHashSet<String>()
-
-            for (s in setInc) {
-                val face = faceService.getFaceById(s.face.id)
-                print(face.faceName)
-                setName.add(face.faceName.toString())
-
-            }
-            mess.recipientName = setName
-        }
+        addRecipientToMessages(messDto)
         var mapParams = LinkedHashMap<String, Any>()
         mapParams[ConstParamService.COUNT_STRING] = countOfMessages.toString()
         mapParams[ConstParamService.RECORDS_STRING] = messDto
         return mapParams
     }
 
+    private fun addRecipientToMessages(messDto:Set<MessageDto>){
+        for (mess in messDto) {
+            val setInc = incomingService.getIncomingByMessageId(mess.id)
+            var setName = LinkedHashSet<FaceDto>()
 
-    override fun getMessageById(authentication: Authentication?, id: Long): Set<MessageDto> {
+            for (s in setInc) {
+                val face = faceService.getFaceById(s.face.id)
+                setName.add(face)
+
+            }
+            mess.recipients = setName
+        }
+    }
+
+
+    override fun getMessageById(authentication: Authentication?, id: Long): Map<String, Any> {
         authenticationValidator.validate(authentication)
         messageValidator.checkId(id.toString())
         //Get user by authentication
@@ -105,7 +109,11 @@ open class MessageServiceImpl @Autowired constructor(private val messageConverte
             LOGGER.error("Messages for this user not exist")
             throw MessageError(ServiceErrorCode.MESSAGE_ID_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)
         }
-        return messageConverter.modelToDtoList(messages)
+        var messDto = messageConverter.modelToDtoList(messages)
+        addRecipientToMessages(messDto)
+        var mapParams = LinkedHashMap<String, Any>()
+        mapParams[ConstParamService.RECORDS_STRING] = messDto
+        return mapParams
     }
 
     override fun checkAndGetMessageById(id: Long): MessageDto {

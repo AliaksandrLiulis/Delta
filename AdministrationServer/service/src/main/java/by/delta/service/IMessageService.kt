@@ -8,7 +8,7 @@ interface IMessageService {
 
     fun createMessage(authentication: Authentication?, messageDto: MessageDto): MessageDto
     fun getUserMessages(authentication: Authentication?, allRequestParams: MutableMap <String,String>): Map<String, Any>
-    fun getMessageById(authentication: Authentication?, id:Long): Set<MessageDto>
+    fun getMessageById(authentication: Authentication?, id:Long): Map<String, Any>
     fun checkAndGetMessageById(id:Long): MessageDto
     fun updateMessage(authentication: Authentication?, id:Long, messageDto: MessageDto): MessageDto
     fun sendMessage(authentication: Authentication?, idMessage: Long)

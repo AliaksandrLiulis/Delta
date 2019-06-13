@@ -30,7 +30,7 @@ open class MessageController @Autowired constructor(private val messageService: 
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    open fun getMessageById(authentication: Authentication?, @PathVariable("id") id: Long): Set<MessageDto> {
+    open fun getMessageById(authentication: Authentication?, @PathVariable("id") id: Long): Map<String, Any> {
         return messageService.getMessageById(authentication, id)
     }
 

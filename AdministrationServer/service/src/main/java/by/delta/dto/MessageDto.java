@@ -29,14 +29,14 @@ public class MessageDto extends AbstractDto {
 
     private FaceDto faceDto;
 
-    private Set<String> recipientName;
+    private Set<FaceDto> recipients;
 
-    public Set<String> getRecipientName() {
-        return recipientName;
+    public Set<FaceDto> getRecipients() {
+        return recipients;
     }
 
-    public void setRecipientName(Set<String> recipientName) {
-        this.recipientName = recipientName;
+    public void setRecipients(Set<FaceDto> recipients) {
+        this.recipients = recipients;
     }
 
     public String getMessageSubject() {
@@ -96,7 +96,7 @@ public class MessageDto extends AbstractDto {
                 ", createDate=" + createDate +
                 ", sendDate=" + sendDate +
                 ", faceDto=" + faceDto +
-                ", recipientName=" + recipientName +
+                ", recipients=" + recipients +
                 '}';
     }
 }
