@@ -1,6 +1,6 @@
-package by.delta.specification.impl.message.countSpecification;
+package by.delta.specification.impl.incoming.countSpecification;
 
-import by.delta.model.Message;
+import by.delta.model.Incoming;
 import by.delta.specification.RepositoryConstParams;
 import by.delta.specification.abstractspecification.AbstractCountQuery;
 import org.springframework.util.CollectionUtils;
@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GetCountOfMessage extends AbstractCountQuery<Message> {
+public class GetCountOfIncomingMessage extends AbstractCountQuery<Incoming> {
 
-    public GetCountOfMessage(Map<String, List<String>> params) {
+    public GetCountOfIncomingMessage(Map<String, List<String>> params) {
         super(params);
     }
 

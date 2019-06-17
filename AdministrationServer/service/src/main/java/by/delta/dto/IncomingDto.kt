@@ -20,4 +20,6 @@ class IncomingDto() : AbstractDto() {
         this.faceDto = faceDto
         this.messageDto = messageDto
     }
+
+
 }

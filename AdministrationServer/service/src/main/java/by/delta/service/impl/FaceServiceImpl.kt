@@ -53,6 +53,15 @@ open class FaceServiceImpl @Autowired constructor(private val faceRepository: IR
         return faceConverter.modelToDto(faces[0])
     }
 
+    override fun getModelFaceByUserEmail(email: String): Face {
+        val faces = faceRepository.query(GetFaceByUserEmail(Helper.getWraperEmail(email)), 1, 0)
+        if (CollectionUtils.isEmpty(faces)) {
+            LOGGER.error("User with such e-mail not exist")
+            throw ValidationException(ServiceErrorCode.EMAIL_USER_NOT_EXISTS, ConstParamService.USER_EMAIL_STRING)
+        }
+        return faces[0]
+    }
+
     companion object {
         private val LOGGER = LoggerFactory.getLogger(FaceServiceImpl::class.java)
     }

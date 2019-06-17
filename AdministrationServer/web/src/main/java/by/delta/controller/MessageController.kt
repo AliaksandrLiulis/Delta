@@ -1,12 +1,10 @@
 package by.delta.controller
 
 import by.delta.dto.MessageDto
-import by.delta.dto.UserDto
 import by.delta.service.IMessageService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
@@ -30,8 +28,8 @@ open class MessageController @Autowired constructor(private val messageService: 
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    open fun getMessageById(authentication: Authentication?, @PathVariable("id") id: Long): Map<String, Any> {
-        return messageService.getMessageById(authentication, id)
+    open fun getMessageById(authentication: Authentication?, @PathVariable("id") id: Long): MessageDto {
+        return messageService.getMessageByIdMessageForUser(authentication, id)
     }
 
 

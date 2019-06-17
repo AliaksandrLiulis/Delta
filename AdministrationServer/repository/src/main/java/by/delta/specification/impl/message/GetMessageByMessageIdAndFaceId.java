@@ -6,9 +6,9 @@ import by.delta.specification.abstractspecification.AbstractCriteriaQuerySpecifi
 import java.util.List;
 import java.util.Map;
 
-public class GetMessageById extends AbstractCriteriaQuerySpecification<Message> {
+public class GetMessageByMessageIdAndFaceId extends AbstractCriteriaQuerySpecification<Message> {
 
-    public GetMessageById(Map<String, List<String>> params) {
+    public GetMessageByMessageIdAndFaceId(Map<String, List<String>> params) {
         super(params);
     }
 }

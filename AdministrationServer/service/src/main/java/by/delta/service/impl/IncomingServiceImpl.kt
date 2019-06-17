@@ -1,6 +1,8 @@
 package by.delta.service.impl
 
+import by.delta.converter.impl.FaceConverter
 import by.delta.converter.impl.IncomingConverter
+import by.delta.converter.impl.MessageConverter
 import by.delta.dto.IncomingDto
 import by.delta.dto.MessageDto
 import by.delta.exception.MessageError
@@ -13,6 +15,7 @@ import by.delta.service.IMessageService
 import by.delta.service.IUserService
 import by.delta.specification.impl.incoming.GetIncomingByIdMessage
 import by.delta.specification.impl.incoming.GetIncomingByIdFace
+import by.delta.specification.impl.incoming.countSpecification.GetCountOfIncomingMessage
 import by.delta.util.ConstParamService
 import by.delta.util.Helper
 import by.delta.validator.AuthenticationValidator
@@ -33,8 +36,9 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
                                                       private val userService: IUserService,
                                                       private val faceService: IFaceService,
                                                       private val messageValidator: MessageValidator,
-                                                      private val userValidator: UserValidator
-
+                                                      private val userValidator: UserValidator,
+                                                      private val messageConverter: MessageConverter,
+                                                      private val faceConverter: FaceConverter
 ) : IIncomingService {
 
     @Autowired
@@ -42,26 +46,48 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
 
     override fun getUserIncoming(authentication: Authentication?, allRequestParams: MutableMap<String, String>): Map<String, Any> {
         authenticationValidator.validate(authentication)
-        val faceDto = faceService.getFaceByUserEmail(authentication!!.name)
-        val x = incomingRepository.query(GetIncomingByIdFace(Helper.getWraperId(faceDto.id)),100,0).toSet()
+        val faceDto = faceService.getModelFaceByUserEmail(authentication!!.name)
+        val list = listOf(faceDto.user!!.id.toString())
+        var newParams = HashMap<String, List<String>>()
+        newParams[ConstParamService.ID] = list
+
+        val countOfIncoming = incomingRepository.countQuery(GetCountOfIncomingMessage(newParams))
+        val allIncoming = incomingRepository.query(GetIncomingByIdFace(Helper.getWraperId(faceDto.id)), 100, 0).toSet()
+
+
+        var result = HashSet<IncomingDto>()
+        for (incoming in allIncoming){
+            val mess = messageService.getIncomingModelMessageByUserId(incoming.id)
+            val sentFace = mess.face
+            var realmessage = messageConverter.modelToDto(mess)
+            realmessage.recipients = null
+            realmessage.messageBody = null
+            realmessage.createDate = null
+            realmessage.faceDto = faceConverter.modelToDto(sentFace)
+            var incDto = incomingConverter.modelToDto(incoming)
+            incDto.messageState = null
+            incDto.messageDto = realmessage
+            result.add(incDto)
+        }
+
         var mapParams = LinkedHashMap<String, Any>()
-        mapParams[ConstParamService.RECORDS_STRING] = incomingConverter.modelToDtoList(x)
+        mapParams[ConstParamService.COUNT_STRING] = countOfIncoming.toString()
+        mapParams[ConstParamService.RECORDS_STRING] = result
         return mapParams
     }
 
     @Transactional
-    override fun createIncoming(authentication: Authentication?, resource: MutableMap<String, Any>): List<IncomingDto> {
-        authenticationValidator.validate(authentication)
-        userService.checkAndGetUserByEmail(authentication!!.name)
+    override fun createIncoming(resource: MutableMap<String, Any>): List<IncomingDto> {
         val responseList = ArrayList<IncomingDto>()
-
         //Same data removed
-        val recipients = removeSameData(checkArrayAndGetList(resource))
+        val recipients = checkArrayAndGetList(resource)
+
         val message = resource["message_id"]
         messageValidator.checkId(message.toString())
 
         //Get exist message by message Id
         val existMessage = messageService.checkAndGetMessageById(message.toString().toLong())
+
         if (existMessage.sendDate != null) {
             LOGGER.error("Message has already been sent")
             throw MessageError(ServiceErrorCode.MESSAGE_WAS_SEND, "")
@@ -75,18 +101,22 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
             addIncoming(responseList, recipients, existMessage)
             return responseList
         }
+
         //Copy of lists for remove and add message
         var listForRemoveMessages: ArrayList<Incoming> = ArrayList(listIncomingMessage)
         var listForAddMessages: ArrayList<Int> = ArrayList(recipients)
         createRemoveAndAddMessageList(responseList, listForRemoveMessages, listForAddMessages, listIncomingMessage, recipients)
-        //remove Incoming records
+
         listForRemoveMessages.forEach(Consumer { t ->
             if (t.messageState == 0) {
                 incomingRepository.remove(t.id)
             }
         })
         //add Incoming records
+
         addIncoming(responseList, listForAddMessages, existMessage)
+
+
         return responseList
     }
 
@@ -102,11 +132,12 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         listForAddMessages.forEach(Consumer { t ->
             var incomingDto = IncomingDto()
             val existUser = userService.getUserById(t.toLong())
-            val faceExistUser = faceService.getFaceByUserId(existUser.id)
+            val existRecipientUser = faceService.getFaceByUserId(existUser.id)
             incomingDto.messageState = 0
             incomingDto.messageDto = existMessage
-            incomingDto.faceDto = faceExistUser
+            incomingDto.faceDto = existRecipientUser
             var savedIncomingDto = incomingConverter.modelToDto(incomingRepository.save(incomingConverter.dtoToModel(incomingDto)))
+            savedIncomingDto.faceDto = existRecipientUser
             resultList.add(savedIncomingDto)
         })
     }
@@ -121,7 +152,7 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         temp.forEach { any -> userValidator.checkId(any.toString()) }
         val list = ArrayList<Int>()
         temp.forEach { t: Any -> list.add(Integer.parseInt(t.toString())) }
-        return list
+        return removeSameData(list)
     }
 
     private fun createRemoveAndAddMessageList(resultList: ArrayList<IncomingDto>,
@@ -133,7 +164,10 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         listIncomingMessage.forEach { message ->
             recipients.forEach { recipient ->
                 if (recipient.toLong() == message.face.id) {
-                    resultList.add(incomingConverter.modelToDto(message))
+                    val existRecipientUser = faceService.getFaceByUserId(recipient.toLong())
+                    var incomingMessage = incomingConverter.modelToDto(message)
+                    incomingMessage.faceDto = existRecipientUser
+                    resultList.add(incomingMessage)
                     listForRemoveMessages.remove(message)
                     listForAddMessages.remove(recipient)
                 }
