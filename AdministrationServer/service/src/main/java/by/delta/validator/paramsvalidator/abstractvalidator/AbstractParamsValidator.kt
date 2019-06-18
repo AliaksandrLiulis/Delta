@@ -6,10 +6,13 @@ import by.delta.util.ConstParamService
 import by.delta.exception.errorCode.ServiceErrorCode
 import org.slf4j.LoggerFactory
 import org.springframework.util.StringUtils
+import com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER
+import jdk.nashorn.internal.objects.NativeArray.forEach
+
 
 abstract class AbstractParamsValidator {
 
-    private var newParams: MutableMap<String, List<String>> = HashMap()
+    protected var newParams: MutableMap<String, List<String>> = HashMap()
 
     fun validate(params: MutableMap<String, String>): MutableMap<String, List<String>> {
         newParams = HashMap()
@@ -20,12 +23,18 @@ abstract class AbstractParamsValidator {
                 if (k.equals(ConstParamService.SORT_KEY, ignoreCase = true)) {
                     checkSortParameters(v)
                 }
+                checkFoundParams(k, v)
+
             }
         }
         return newParams
     }
 
-    internal open fun checkResolvedParams(params: MutableMap<String, String>) {
+    protected open fun checkFoundParams(key: String, value: String) {
+    }
+
+
+    protected open fun checkResolvedParams(params: MutableMap<String, String>) {
         params.forEach { key, value ->
             if (!key.equals(ConstParamService.SORT_KEY, ignoreCase = true)
                     && !key.equals(ConstParamService.LIMIT, ignoreCase = true)

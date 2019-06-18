@@ -25,6 +25,12 @@ open class MessageController @Autowired constructor(private val messageService: 
         return messageService.getUserMessages(authentication, allRequestParams)
     }
 
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    open fun removeUserMessages(authentication: Authentication?, @RequestBody removeMessage:MutableMap<String,List<Long>>) {
+        return messageService.removeUserMessages(authentication, removeMessage)
+    }
+
 
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -43,6 +49,12 @@ open class MessageController @Autowired constructor(private val messageService: 
     @ResponseStatus(HttpStatus.OK)
     open fun sendMessage(authentication: Authentication?, @PathVariable("id")id: Long) {
       messageService.sendMessage(authentication, id)
+    }
+
+    @GetMapping(value = "/sent")
+    @ResponseStatus(HttpStatus.OK)
+    open fun sentMessage(authentication: Authentication?, @RequestParam allRequestParams: MutableMap<String, String>): Map<String, Any> {
+        return messageService.sentMessage(authentication, allRequestParams)
     }
 
 }

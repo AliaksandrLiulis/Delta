@@ -28,10 +28,25 @@ public class GetCountOfMessage extends AbstractCountQuery<Message> {
                     List<String> list = (List<String>) o2;
                     ((List<String>) o2).forEach(s -> {
                         conditionList.add(criteriaBuilder.equal(root.get("face").get(o.toString()), s));
+
                     });
                 }
             });
+            conditionList.add(criteriaBuilder.equal(root.get("removed"), 0));
         }
         return conditionList;
+    }
+
+    protected Predicate getPredicate(final CriteriaQuery query, final Root root, final CriteriaBuilder criteriaBuilder) {
+        Predicate orClause = null;
+        List<Predicate> conditionList = getWhereCondition(query, root, criteriaBuilder);
+        if (!CollectionUtils.isEmpty(conditionList)) {
+            if (conditionList.size() == 1) {
+                orClause = conditionList.get(0);
+            } else {
+                orClause = criteriaBuilder.and(conditionList.toArray(new Predicate[conditionList.size()]));
+            }
+        }
+        return orClause;
     }
 }

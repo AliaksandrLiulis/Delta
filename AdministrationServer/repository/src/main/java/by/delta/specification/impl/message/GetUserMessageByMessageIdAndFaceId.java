@@ -5,14 +5,17 @@ import by.delta.specification.RepositoryConstParams;
 import by.delta.specification.abstractspecification.AbstractCriteriaQuerySpecification;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GetUserMessagesByFaceId extends AbstractCriteriaQuerySpecification<Message> {
+public class GetUserMessageByMessageIdAndFaceId extends AbstractCriteriaQuerySpecification<Message> {
 
-    public GetUserMessagesByFaceId(Map<String, List<String>> params) {
+    public GetUserMessageByMessageIdAndFaceId(Map<String, List<String>> params) {
         super(params);
     }
 
@@ -20,15 +23,20 @@ public class GetUserMessagesByFaceId extends AbstractCriteriaQuerySpecification<
     public List<Predicate> getWhereCondition(CriteriaQuery<Message> query, Root<Message> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> conditionList = new ArrayList();
         if (!CollectionUtils.isEmpty(params)) {
-                params.forEach((k, v) -> {
-                    if (k.equalsIgnoreCase(RepositoryConstParams.ID_KEY)) {
-                        v.forEach(s -> {
-                            conditionList.add(criteriaBuilder.equal(root.get("face").get(k), s));
+            params.forEach((k, v) -> {
+                if (k.equalsIgnoreCase(RepositoryConstParams.ID_KEY)) {
+                    v.forEach(s -> {
+                        conditionList.add(criteriaBuilder.equal(root.get(k), s));
+                    });
+                }
+                if (k.equalsIgnoreCase("faceid")) {
+                    v.forEach(s -> {
+                        conditionList.add(criteriaBuilder.equal(root.join("face").get("id"), s));
+                    });
 
-                        });
-                    }
-                });
-            conditionList.add(criteriaBuilder.equal(root.get("removed"), 0));
+                }
+
+            });
         }
         return conditionList;
     }

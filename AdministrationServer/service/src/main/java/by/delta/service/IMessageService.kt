@@ -14,4 +14,6 @@ interface IMessageService {
     fun checkAndGetMessageById(id:Long): MessageDto
     fun updateMessage(authentication: Authentication?, id:Long, messageDto: MessageDto): MessageDto
     fun sendMessage(authentication: Authentication?, idMessage: Long)
+    fun removeUserMessages(authentication: Authentication?, removeMessage:MutableMap<String,List<Long>>)
+    fun sentMessage(authentication: Authentication?,allRequestParams: MutableMap<String, String>): Map<String, Any>
 }

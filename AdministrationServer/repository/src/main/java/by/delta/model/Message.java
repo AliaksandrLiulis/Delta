@@ -5,7 +5,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,6 +24,16 @@ public class Message extends AbstractModel {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "face_id")
     private Face face;
+    @JoinColumn(name = "removed")
+    private int removed;
+
+    public int getRemoved() {
+        return removed;
+    }
+
+    public void setRemoved(int removed) {
+        this.removed = removed;
+    }
 
     public String getMessageSubject() {
         return messageSubject;

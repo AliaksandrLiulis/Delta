@@ -1,5 +1,8 @@
 package by.delta.specification.abstractspecification;
 
+import by.delta.model.Message;
+import org.springframework.util.CollectionUtils;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -21,5 +24,4 @@ public class AbstractCountQuery<Entity> extends AbstractCriteriaQuerySpecificati
         }
         return query.select(criteriaBuilder.countDistinct(root));
     }
-
 }

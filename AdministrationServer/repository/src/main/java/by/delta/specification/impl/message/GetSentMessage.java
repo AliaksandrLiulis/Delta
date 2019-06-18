@@ -1,8 +1,8 @@
-package by.delta.specification.impl.incoming.countSpecification;
+package by.delta.specification.impl.message;
 
-import by.delta.model.Incoming;
+import by.delta.model.Message;
 import by.delta.specification.RepositoryConstParams;
-import by.delta.specification.abstractspecification.AbstractCountQuery;
+import by.delta.specification.abstractspecification.AbstractCriteriaQuerySpecification;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -13,30 +13,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GetCountOfIncomingMessage extends AbstractCountQuery<Incoming> {
+public class GetSentMessage extends AbstractCriteriaQuerySpecification<Message> {
 
-    public GetCountOfIncomingMessage(Map<String, List<String>> params) {
+    public GetSentMessage(Map<String, List<String>> params) {
         super(params);
     }
 
     @Override
-    protected List<Predicate> getWhereCondition(CriteriaQuery query, Root root, CriteriaBuilder criteriaBuilder) {
+    public List<Predicate> getWhereCondition(CriteriaQuery<Message> query, Root<Message> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> conditionList = new ArrayList();
         if (!CollectionUtils.isEmpty(params)) {
-            params.forEach((o, o2) -> {
-                if (o.toString().equalsIgnoreCase(RepositoryConstParams.ID_KEY)) {
-                    List<String> list = (List<String>) o2;
-                    ((List<String>) o2).forEach(s -> {
-                        conditionList.add(criteriaBuilder.equal(root.get("face").get(o.toString()), s));
+            params.forEach((k, v) -> {
+                if (k.equalsIgnoreCase(RepositoryConstParams.ID_KEY)) {
+                    v.forEach(s -> {
+                        conditionList.add(criteriaBuilder.equal(root.join("face").get(k), s));
                     });
                 }
             });
-            conditionList.add(criteriaBuilder.isNotNull(root.get("message").get("sendDate")));
+            conditionList.add(criteriaBuilder.isNotNull(root.get("sendDate")));
         }
         return conditionList;
     }
 
-    protected Predicate getPredicate(final CriteriaQuery query, final Root root, final CriteriaBuilder criteriaBuilder) {
+    protected Predicate getPredicate(final CriteriaQuery<Message> query, final Root<Message> root, final CriteriaBuilder criteriaBuilder) {
         Predicate orClause = null;
         List<Predicate> conditionList = getWhereCondition(query, root, criteriaBuilder);
         if (!CollectionUtils.isEmpty(conditionList)) {

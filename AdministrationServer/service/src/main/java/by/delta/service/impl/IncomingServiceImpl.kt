@@ -8,14 +8,21 @@ import by.delta.dto.MessageDto
 import by.delta.exception.MessageError
 import by.delta.exception.errorCode.ServiceErrorCode
 import by.delta.model.Incoming
+import by.delta.model.Message
 import by.delta.repository.IRepository
+import by.delta.repository.impl.MessageRepositoryImpl
 import by.delta.service.IFaceService
 import by.delta.service.IIncomingService
 import by.delta.service.IMessageService
 import by.delta.service.IUserService
-import by.delta.specification.impl.incoming.GetIncomingByIdMessage
+import by.delta.specification.impl.incoming.GetIncomingByFaceIdAndMessageId
+import by.delta.specification.impl.incoming.GetIncomingById
 import by.delta.specification.impl.incoming.GetIncomingByIdFace
 import by.delta.specification.impl.incoming.countSpecification.GetCountOfIncomingMessage
+import by.delta.specification.impl.message.GetIncomingMessages
+import by.delta.specification.impl.message.GetMessageByMessageId
+import by.delta.specification.impl.message.GetSentMessage
+import by.delta.specification.impl.message.GetUserMessageByMessageIdAndFaceId
 import by.delta.util.ConstParamService
 import by.delta.util.Helper
 import by.delta.validator.AuthenticationValidator
@@ -38,7 +45,9 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
                                                       private val messageValidator: MessageValidator,
                                                       private val userValidator: UserValidator,
                                                       private val messageConverter: MessageConverter,
-                                                      private val faceConverter: FaceConverter
+                                                      private val faceConverter: FaceConverter,
+                                                      private val messageRepository: IRepository<Message>
+
 ) : IIncomingService {
 
     @Autowired
@@ -56,7 +65,7 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
 
 
         var result = HashSet<IncomingDto>()
-        for (incoming in allIncoming){
+        for (incoming in allIncoming) {
             val mess = messageService.getIncomingModelMessageByUserId(incoming.id)
             val sentFace = mess.face
             var realmessage = messageConverter.modelToDto(mess)
@@ -94,7 +103,7 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         }
 
         //Get exist incoming message by message Id
-        val listIncomingMessage = incomingRepository.query(GetIncomingByIdMessage(Helper.getWraperId(existMessage.id)), 1000, 0)
+        val listIncomingMessage = incomingRepository.query(GetIncomingById(Helper.getWraperId(existMessage.id)), 1000, 0)
 
         //add Incoming records if table for message is empty
         if (CollectionUtils.isEmpty(listIncomingMessage)) {
@@ -120,8 +129,30 @@ open class IncomingServiceImpl @Autowired constructor(private val incomingReposi
         return responseList
     }
 
-    override fun getIncomingByMessageId(messageId: Long): List<Incoming> {
-        return incomingRepository.query(GetIncomingByIdMessage(Helper.getWraperId(messageId)), 100, 0)
+    override fun getIncomingById(messageId: Long): List<Incoming> {
+        return incomingRepository.query(GetIncomingById(Helper.getWraperId(messageId)), 1, 0)
+    }
+
+    override fun getIncomingByMessageId(authentication: Authentication?, messageId: Long): MessageDto {
+        authenticationValidator.validate(authentication)
+        val face = faceService.getModelFaceByUserEmail(authentication!!.name)
+        var newParams: MutableMap<String, List<String>> = Helper.getWraperId(messageId)
+        val list = listOf(face.id.toString())
+        newParams[ConstParamService.FACE_ID] = list
+        val incoming = incomingRepository.query(GetIncomingByFaceIdAndMessageId(newParams),1,0)
+        if (CollectionUtils.isEmpty(incoming)) {
+            LOGGER.error("Messages for this user not exist")
+            throw MessageError(ServiceErrorCode.MESSAGE_ID_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)
+        }
+        val messages = messageRepository.query(GetIncomingMessages(Helper.getWraperId(messageId)), 1, 0)
+        if (CollectionUtils.isEmpty(messages)) {
+            LOGGER.error("Messages for this user not exist")
+            throw MessageError(ServiceErrorCode.MESSAGE_ID_NOT_EXIST, ConstParamService.MESSAGE_ID_STRING)
+        }
+        var whosent = messages[0].face
+        val messageDto = messageConverter.modelToDto(messages[0])
+        messageDto.faceDto = faceConverter.modelToDto(whosent)
+        return messageDto
     }
 
     override fun updateIncoming(incoming: Incoming): Incoming {

@@ -93,7 +93,7 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
     }
 
     override fun getUserById(idUser: Long): UserDto {
-        val existUser =  userRepository.query(GetUserById(Helper.getWraperId(idUser)), 1, 0)
+        val existUser = userRepository.query(GetUserById(Helper.getWraperId(idUser)), 1, 0)
         if (CollectionUtils.isEmpty(existUser)) {
             LOGGER.error("User with such id not exist")
             throw ModelSameServiceException(ServiceErrorCode.ID_USER_NOT_EXISTS, ConstParamService.USER_ID_STRING)
@@ -164,12 +164,12 @@ open class UserServiceImpl @Autowired constructor(private val bCryptPasswordEnco
         }
     }
 
-    private fun getListUserByUniqueParams(str: String):List<User>{
-        when(str.contains(ConstParamService.CHAR_EMAIL_STRING)){
-            true -> return  getUserByEmail(str)
+    private fun getListUserByUniqueParams(str: String): List<User> {
+        when (str.contains(ConstParamService.CHAR_EMAIL_STRING)) {
+            true -> return getUserByEmail(str)
             false -> getUserByName(str)
         }
-        return  getUserByEmail(str)
+        return getUserByEmail(str)
     }
 
     companion object {

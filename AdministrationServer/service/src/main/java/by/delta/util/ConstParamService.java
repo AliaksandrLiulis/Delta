@@ -7,6 +7,7 @@ public class ConstParamService {
     public static final String SURNAME = "surName";
     public static final String PATRONYMIC = "patronymic";
     public static final String SEX = "sex";
+    public static final String SEARCH = "search";
     public static final String EMAIL = "email";
     public static final String UNP_ORG = "orgunp";
     public static final String CHAR_EMAIL_STRING = "@";

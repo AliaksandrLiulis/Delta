@@ -1,7 +1,6 @@
-package by.delta.specification.impl.incoming;
+package by.delta.specification.impl.message;
 
-import by.delta.model.Face;
-import by.delta.model.Incoming;
+import by.delta.model.Message;
 import by.delta.specification.RepositoryConstParams;
 import by.delta.specification.abstractspecification.AbstractCriteriaQuerySpecification;
 import org.springframework.util.CollectionUtils;
@@ -14,24 +13,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GetIncomingByIdMessage extends AbstractCriteriaQuerySpecification<Incoming> {
+public class GetMessageByMessageId extends AbstractCriteriaQuerySpecification<Message> {
 
-    public GetIncomingByIdMessage(Map<String, List<String>> params) {
+    public GetMessageByMessageId(Map<String, List<String>> params) {
         super(params);
     }
 
     @Override
-    public List<Predicate> getWhereCondition(CriteriaQuery<Incoming> query, Root<Incoming> root, CriteriaBuilder criteriaBuilder) {
+    public List<Predicate> getWhereCondition(CriteriaQuery<Message> query, Root<Message> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> conditionList = new ArrayList();
         if (!CollectionUtils.isEmpty(params)) {
             params.forEach((k, v) -> {
                 if (k.equalsIgnoreCase(RepositoryConstParams.ID_KEY)) {
                     v.forEach(s -> {
-                        conditionList.add(criteriaBuilder.equal(root.join("message").get(k), s));
+                        conditionList.add(criteriaBuilder.equal(root.get(k), s));
                     });
                 }
             });
         }
         return conditionList;
     }
+
 }

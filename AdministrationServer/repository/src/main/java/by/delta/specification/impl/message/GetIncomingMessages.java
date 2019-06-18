@@ -1,4 +1,4 @@
-package by.delta.specification.impl.message.countSpecification;
+package by.delta.specification.impl.message;
 
 import by.delta.model.Message;
 import by.delta.specification.RepositoryConstParams;
@@ -13,15 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GetMessageByMessageId extends AbstractCriteriaQuerySpecification<Message> {
+public class GetIncomingMessages extends AbstractCriteriaQuerySpecification<Message> {
 
-    public GetMessageByMessageId(Map<String, List<String>> params) {
+    public GetIncomingMessages(Map<String, List<String>> params) {
         super(params);
     }
 
     @Override
     public List<Predicate> getWhereCondition(CriteriaQuery<Message> query, Root<Message> root, CriteriaBuilder criteriaBuilder) {
-        System.out.println(params);
         List<Predicate> conditionList = new ArrayList();
         if (!CollectionUtils.isEmpty(params)) {
             params.forEach((k, v) -> {
@@ -31,7 +30,21 @@ public class GetMessageByMessageId extends AbstractCriteriaQuerySpecification<Me
                     });
                 }
             });
+            conditionList.add(criteriaBuilder.isNotNull(root.get("sendDate")));
         }
         return conditionList;
+    }
+
+    protected Predicate getPredicate(final CriteriaQuery<Message> query, final Root<Message> root, final CriteriaBuilder criteriaBuilder) {
+        Predicate orClause = null;
+        List<Predicate> conditionList = getWhereCondition(query, root, criteriaBuilder);
+        if (!CollectionUtils.isEmpty(conditionList)) {
+            if (conditionList.size() == 1) {
+                orClause = conditionList.get(0);
+            } else {
+                orClause = criteriaBuilder.and(conditionList.toArray(new Predicate[conditionList.size()]));
+            }
+        }
+        return orClause;
     }
 }
